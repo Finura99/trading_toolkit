@@ -1,4 +1,4 @@
-
+from src.utils import reverse_string, log_execution
 # add input validation
 
 def validate_input(symbol: str):
@@ -6,7 +6,6 @@ def validate_input(symbol: str):
     symbol = symbol.strip().upper()
 
     return symbol
-
 
 
 def create_trade(conn, symbol: str, quantity: float, price: float): # parameters 
@@ -68,6 +67,18 @@ def get_portfolio(conn):
 
     return result
 
+# generator
+def generate_trade(rows):
+    for row in rows:
+        yield {
+            "symbol": row[0],
+            "quantity" : row[1],
+            "price": row[2],
+            "trade_value" : row[1] * row[2]
+        }
+    return list(generate_trade(rows))
+
+
 def get_trades_by_symbol(conn, symbol: str):
 
     cursor = conn.cursor()
@@ -80,7 +91,7 @@ def get_trades_by_symbol(conn, symbol: str):
     (symbol,)
     )
 
-    rows = cursor.fetchall()
+    rows = cursor.fetchall() # list of tuples
     cursor.close()
 
     result = []
@@ -88,6 +99,7 @@ def get_trades_by_symbol(conn, symbol: str):
     for row in rows:
         result.append({
             "symbol" : row[0],
+            "reversed_symbol": reverse_string(row[0]), # first element of the tuple
             "quantity" : row[1],
             "price" : row[2],
             "trade_value": row[1] * row[2]
@@ -95,6 +107,7 @@ def get_trades_by_symbol(conn, symbol: str):
 
     return result
 
+@log_execution # a decorator is a func that takes another func as an input and returns a new func wrapper that adds extra behaviour
 def get_trades(conn):
 
     cursor = conn.cursor()
