@@ -8,10 +8,29 @@ class Trade:
         return self._quantity * self.price
     
     # class with special methods that act as constructors
+
+class EquityTrade(Trade): # inheritance...
+    
+    # create a special method
+    def __init__(self, symbol: str, quantity: float, price: float, exchange: str):
+        super().__init__(symbol, quantity, price) # inherited attributes
+
+        self.exchange = exchange # extends behaviour from the inherited class
+
+    def trade_value(self):
+        return super().trade_value() * 1.01 # calling parent logic using super method (inheritance) including fee is polymorphism
+
+
+
+
+
+
     
 trade = Trade("AAPL", 10, 200) # object (instance of class)
 print(trade.symbol)
 print(trade.trade_value())
+
+
 
 # reverse a string
 

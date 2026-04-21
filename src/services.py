@@ -1,5 +1,5 @@
 from src.utils import reverse_string, log_execution
-from src.oop_sandbox import Trade
+from src.oop_sandbox import Trade, EquityTrade
 # add input validation
 
 def validate_input(symbol: str):
@@ -70,12 +70,15 @@ def get_portfolio(conn):
 
 # generator
 def generate_trade(rows):
+
+    trade = Trade.trade_value()
+
     for row in rows:
         yield {
             "symbol": row[0],
             "quantity" : row[1],
             "price": row[2],
-            "trade_value" : row[1] * row[2]
+            "trade_value" : trade
         }
     return list(generate_trade(rows))
 
@@ -127,12 +130,14 @@ def get_trades(conn):
 
         result = []
 
+        trade = EquityTrade(row[0], row[1], row[2], "NASDAQ")
+
         for row in rows:
             result.append({
                 "symbol" : row[0],
                 "quantity": row[1],
                 "price" : row[2],
-                "trade_value": row[1] * row[2]
+                "trade_value": trade.trade_value()
             })
 
         return result
