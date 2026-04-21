@@ -1,4 +1,5 @@
 from src.utils import reverse_string, log_execution
+from src.oop_sandbox import Trade
 # add input validation
 
 def validate_input(symbol: str):
@@ -97,13 +98,16 @@ def get_trades_by_symbol(conn, symbol: str):
     result = []
 
     for row in rows:
+
+        trade = Trade(row[0], row[1], row[2]) # used a class to rep a trade object for extendability instead of raw dict.
+
         result.append({
-            "symbol" : row[0],
+            "symbol" : trade.symbol,
             "reversed_symbol": reverse_string(row[0]), # first element of the tuple
-            "quantity" : row[1],
-            "price" : row[2],
-            "trade_value": row[1] * row[2]
-        })
+            "quantity" : trade._quantity,
+            "price" : trade.price,
+            "trade_value": trade.trade_value()
+        }) 
 
     return result
 
