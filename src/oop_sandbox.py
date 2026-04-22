@@ -1,11 +1,17 @@
 class Trade:
     def __init__(self, symbol: str, quantity: float, price: float): # init allows to initialise the attributes of an object
         self.symbol = symbol
-        self._quantity = quantity
+        self._quantity = quantity # encapsulated
         self.price = price
 
     def trade_value(self) -> float: # func within the class ?
         return self._quantity * self.price
+    
+    def set_quantity(self, value: float): # enforce valdiation rules on quantity instead of modifying it directly...
+        if value < 0:
+            raise ValueError("Quantity is not positive")
+        self._quantity = value
+
     
     # class with special methods that act as constructors
 
@@ -19,10 +25,6 @@ class EquityTrade(Trade): # inheritance...
 
     def trade_value(self):
         return super().trade_value() * 1.01 # calling parent logic using super method (inheritance) including fee is polymorphism
-
-
-
-
 
 
     
