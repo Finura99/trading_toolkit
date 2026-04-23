@@ -33,19 +33,19 @@ print(trade.trade_value())
 
 # reverse a string
 
-def reverse_string(symbol: str) -> str:
+def reverse_string(symbol: str) -> str: #O(n)
     return symbol[::-1]
 
-def reverse_string_using_loop(symbol: str) -> str:
+def reverse_string_using_loop(symbol: str) -> str: #O(n2)
     
     result = ""
 
     for char in symbol:
-        result = char + result
+        result = char + result #O(n)
     return result
 
-def reverse_string_pointers(s: list):
-    s = list[s] #strings are immutable
+def reverse_string_pointers(s: list): #O(n) manual
+    s = list[s] # strings are immutable
 
     left, right = 0, len(s) - 1 # pointers declared
 

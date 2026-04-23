@@ -126,6 +126,7 @@ def get_trades(conn):
         """
         )
 
+        rows = rows[:5] # practicing slicing
         rows = cursor.fetchall()
 
         result = []
