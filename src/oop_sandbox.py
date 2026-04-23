@@ -56,3 +56,51 @@ def reverse_string_pointers(s: list): #O(n) manual
         right +=1 # move pointer
     
     return "".join(s)
+
+
+# practise reverse string
+def reverse_string(symbol: str):
+    #slicing method
+    return symbol[::-1] # O(n)
+
+def reverse_string_loop(symbol: str):
+
+    result = ""
+
+    for char in symbol:
+        result = char + result
+    
+    return result # O(n2)
+
+def reversed_string_pointers(s: list) -> str:
+
+    char = list(s)
+    left, right = 0, len(char) - 1
+
+    while left < right:
+        char[left], char[right] = char[right], char[left]
+
+        left +=1
+        right -=1
+
+    return "".join(char) # O(n)
+
+def palindrome_pointers(s: str) -> bool:
+
+    left, right = 0, len(s) -1
+
+    while left < right:
+        if s[left] != s[right]:
+            return False
+    
+        left+=1
+        right-=1
+    return True #O(n) - time O(1) space 
+
+## i would check if the pointers index matches with each other and once the pointers go past each other in the string the loop stop execution.
+
+def is_palindrome(s: str) -> bool:
+    
+    return s == s[::-1]
+
+

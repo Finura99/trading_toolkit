@@ -123,17 +123,17 @@ def get_trades(conn):
         cursor.execute("""
             SELECT symbol, quantity, price
             FROM trades
+            LIMIT 5;
         """
         )
 
-        rows = rows[:5] # practicing slicing
         rows = cursor.fetchall()
-
         result = []
 
-        trade = EquityTrade(row[0], row[1], row[2], "NASDAQ")
 
         for row in rows:
+            trade = EquityTrade(row[0], row[1], row[2], "NASDAQ")
+
             result.append({
                 "symbol" : row[0],
                 "quantity": row[1],
