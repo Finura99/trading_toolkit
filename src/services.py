@@ -115,7 +115,7 @@ def get_trades_by_symbol(conn, symbol: str):
     return result
 
 @log_execution # a decorator is a func that takes another func as an input and returns a new func wrapper that adds extra behaviour
-def get_trades(conn):
+def get_trades(conn, limit: int):
 
     cursor = conn.cursor()
 
@@ -123,8 +123,8 @@ def get_trades(conn):
         cursor.execute("""
             SELECT symbol, quantity, price
             FROM trades
-            LIMIT 5;
-        """
+            LIMIT %s
+        """, (limit,)
         )
 
         rows = cursor.fetchall()
@@ -159,7 +159,7 @@ def get_portfolio_by_symbol(conn, symbol: str):
                 SUM(quantity * price) AS total_value
             FROM trades
             WHERE symbol = %s
-            GROUP BY symbol;
+            GROUP BY symbol
         """,
         (symbol,))
 

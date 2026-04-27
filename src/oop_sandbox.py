@@ -104,3 +104,56 @@ def is_palindrome(s: str) -> bool:
     return s == s[::-1]
 
 
+# practice removing duplicates from a string (preserve order)
+## use a set for uniqueness - O (1) for lookups
+
+def remove_duplicates(s : str) -> str:
+
+    unique = set() # create a set
+    result = []
+
+    for char in s:
+        if char not in unique:
+            unique.add(char)
+            result.append(char)
+
+    return "".join(result)
+
+
+# regular function 
+def square(x):
+    return x * x
+
+#lambda
+square_lambda = lambda x: x * x
+
+numbers = [1, 2, 3]
+
+result = map(lambda x: x * 2, numbers)
+list(result)
+
+result = [x * 2 for x in numbers]
+
+##Find the first non-repeating character in a string
+## "aabbcde" -> "c"
+
+def non_repeating(s: str) -> str:
+
+    ##string is immutable
+    ##convert to a list
+    ## two pointers is possible here WRONG ====== ITS A COUNTING / FREQUENCY PROBLEM
+    counts = {}
+
+    for char in s:
+        counts[char] = counts.get(char, 0) + 1
+
+    for char in s:
+        if counts[char] == 1:
+            return char
+
+    return None
+## time = O(n), space = O(n)
+
+
+
+    

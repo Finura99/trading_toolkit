@@ -14,6 +14,7 @@ app = FastAPI()
 def create_trade_endpoint(trade: TradeCreate):
 
     # get connection
+
     conn = get_connection()
 
     try:
@@ -51,12 +52,13 @@ def get_trade_symbol(symbol : str):
         conn.close() # close connection
 
 @app.get("/trades", response_model=list[TradeResponse])
-def get_trades_endpoint():
+def get_trades_endpoint(limit: int = 5):
 
     conn = get_connection() # get conenction
 
+
     try:
-        result = get_trades(conn)
+        result = get_trades(conn, limit)
 
         if not result:
             raise HTTPException(status_code=404, detail="Trades not found")

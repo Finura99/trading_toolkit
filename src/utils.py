@@ -5,11 +5,11 @@ def reverse_string(symbol: str) -> str:
 def log_execution(func): #decorator
 
     def wrapper(*args, **kwargs):
-        print(f"Running function: {func.__name__}") # extended behaviour -------
+        print(f"Running function: {func.__name__}") # extended behaviour before-------
 
         result = func(*args, **kwargs)
 
-        print(f"Finished function: {func.__name__}") # extended behaviour ------
+        print(f"Finished function: {func.__name__}") # extended behaviour after------
 
         return result
     return wrapper
