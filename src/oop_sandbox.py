@@ -155,5 +155,44 @@ def non_repeating(s: str) -> str:
 ## time = O(n), space = O(n)
 
 
+## Second most frequent character in the string
+##Example: "aabbbcc" -> "a"
 
+
+def second_most_freq(s: str) -> str:
+
+    #counting / frequency using dictionary?
+
+    count = {}
+
+    for char in s:
+        count[char] = count.get(char, 0) + 1
+
+    freqs = sorted(count.values, reverse=True)
+
+    if len(freqs) < 2:
+        return None
     
+    second_freqs = freqs[1]
+
+    for char in count:
+        if count[char] == second_freqs:
+            return char
+        
+
+## Find the first duplicate charac in a string
+## ex: "abcade" -> "a"
+
+def first_dup(s : str) -> str | None:
+
+    ## using set for uniqueness
+    ## retrieve string
+
+    unique = set() #O(1) lookups
+
+    for char in s: #O(n)
+        if char in unique:
+            return char
+        unique.add(char)
+
+    return None
