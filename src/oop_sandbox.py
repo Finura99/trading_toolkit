@@ -22,12 +22,27 @@ class EquityTrade(Trade): # inheritance...
 
     def trade_value(self):
         return super().trade_value() * 1.01 # fee is polymorphism that overrides base class method behaviour
-
+    
+    def to_dict(self):
+        return {
+            "symbol": self.symbol,
+            "quantity": self._quantity,
+            "price": self.price,
+            "trade_value": self.trade_value()
+        }
 
     
 trade = Trade("AAPL", 10, 200) # object (instance of class)
-print(trade.symbol)
-print(trade.trade_value())
+##print(trade.symbol)
+##print(trade.trade_value())
+
+
+
+
+
+
+
+
 
 
 

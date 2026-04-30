@@ -1,5 +1,7 @@
 from src.utils import reverse_string, log_execution
 from src.oop_sandbox import Trade, EquityTrade
+
+import logging
 # add input validation
 
 def validate_input(symbol: str):
@@ -8,33 +10,40 @@ def validate_input(symbol: str):
 
     return symbol
 
+logging.basicConfig(level=logging.INFO)
 
-def create_trade(conn, symbol: str, quantity: float, price: float): # parameters 
+
+def create_trade(conn, trade: EquityTrade): # parameters 
     cursor = conn.cursor()
 
-    # insert into db
-    try:
-        cursor.execute(
+    
+    try: # cursor is the tools used within the connection
+        cursor.execute( 
             """
             INSERT INTO trades (symbol, quantity, price)
             VALUES (%s, %s, %s)
             RETURNING symbol, quantity, price;
             """,
-            (symbol, quantity, price)
+            (trade.symbol, trade.quantity, trade.price)
         )
 
         row = cursor.fetchone() # returns as a tuple
-        cursor.commit() # write function
 
-        # calculate derived field
-        trade_value = row[1] * row[2]
+        logging.info("Before Commit")        
+        conn.commit() # save changes - transaction handling
+        logging.info("After Commit")
+        
+
+        symbol, quantity, price = row
 
         return {
-            "symbol" : row[0],
-            "quantity": row[1],
-            "price" : row[2],
-            "trade_value" : trade_value
+            "symbol" : symbol,
+            "quantity": quantity,
+            "price" : price,
+            "trade_value" : trade.trade_value()
         }
+        
+    
     finally:
         cursor.close()
 
@@ -132,14 +141,11 @@ def get_trades(conn, limit: int):
 
 
         for row in rows:
-            trade = EquityTrade(row[0], row[1], row[2], "NASDAQ")
+            symbol, quantity, price = row
 
-            result.append({
-                "symbol" : row[0],
-                "quantity": row[1],
-                "price" : row[2],
-                "trade_value": trade.trade_value()
-            })
+            trade = EquityTrade(symbol, quantity, price, "NASDAQ")
+
+            result.append(trade.to_dict()) # method inside equity class
 
         return result
 

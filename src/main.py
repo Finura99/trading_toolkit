@@ -1,5 +1,7 @@
-from fastapi import FastAPI, HTTPException
+import time
+from fastapi import FastAPI, HTTPException, Query
 
+from src.oop_sandbox import EquityTrade, Trade
 from src.db import get_connection
 from src.schemas import TradeCreate, TradeResponse, PortfolioResponse
 from src.services import (create_trade, 
@@ -12,13 +14,17 @@ app = FastAPI()
 
 @app.post("/trades", response_model=TradeResponse)
 def create_trade_endpoint(trade: TradeCreate):
+    trade_obj = EquityTrade(
+        trade.symbol,
+        trade.quantity,
+        trade.price,
+        "NASDAQ"
+    )
 
-    # get connection
-
-    conn = get_connection()
+    conn = get_connection() # get connection
 
     try:
-        return create_trade(trade.symbol, trade.quantity, trade.price)
+        return create_trade(conn, trade_obj)
     finally:
         conn.close()
 
@@ -36,6 +42,7 @@ def get_trade_endpoint():
         conn.close()
 
 
+
 @app.get("/trades/{symbol}", response_model=list[TradeResponse])
 def get_trade_symbol(symbol : str):
 
@@ -51,8 +58,10 @@ def get_trade_symbol(symbol : str):
     finally:
         conn.close() # close connection
 
+
+
 @app.get("/trades", response_model=list[TradeResponse])
-def get_trades_endpoint(limit: int = 5):
+def get_trades_endpoint(limit: int = Query(default=5, gt=0, le=100)):
 
     conn = get_connection() # get conenction
 
@@ -67,6 +76,8 @@ def get_trades_endpoint(limit: int = 5):
     
     finally:
         conn.close()
+
+
 
 @app.get("/portfolio/{symbol}", response_model=PortfolioResponse)
 def get_portfolio_by_symbol_endpoint(symbol: str):

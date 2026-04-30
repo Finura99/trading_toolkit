@@ -1,4 +1,12 @@
+# Virtual Environment
 .venv/
-.vscode
+
+# Editor
+.vscode/
+
+# Python
 __pycache__/
 *.pyc
+
+# Logs
+*.log
