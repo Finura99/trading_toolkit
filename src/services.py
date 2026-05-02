@@ -16,8 +16,10 @@ logging.basicConfig(level=logging.INFO)
 def create_trade(conn, trade: EquityTrade): # parameters 
     cursor = conn.cursor()
 
-    
     try: # cursor is the tools used within the connection
+        
+        logging.info(f"Creating trade for symbol={trade.symbol}")
+        
         cursor.execute( 
             """
             INSERT INTO trades (symbol, quantity, price)
@@ -48,7 +50,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
         cursor.close()
 
 
-def get_portfolio(conn):
+def get_portfolio(conn): # aggregates the trade data into a overview for the client to get detailed info of their portfolio.
 
     cursor = conn.cursor()
 
@@ -80,9 +82,9 @@ def get_portfolio(conn):
 # generator
 def generate_trade(rows):
 
-    trade = Trade.trade_value()
+    trade = Trade.trade_value() # invoke the class as it promotes reusability.
 
-    for row in rows:
+    for row in rows: # lazy sequencing, has a stop iterator
         yield {
             "symbol": row[0],
             "quantity" : row[1],

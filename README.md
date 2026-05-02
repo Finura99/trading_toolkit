@@ -39,3 +39,21 @@ POST /trades
     "quantity" : 10,
     "price" : 100
 }
+
+## Architecture
+
+The system is structured into three layers:
+
+- API Layer (FastAPI): handles requests and validation
+- Service Layer: contains business logic and database interaction
+- Database Layer: stores market data
+
+Data flows from the API through validation and restructured into doamin objects for better design and reusability, then into the sercie layer for processing and persistence into the DB.
+
+## What I Learned
+
+- Building a backend API using FastAPI
+- Used Pydantic for validation
+- Implemented OOP for domain modelling
+- Added unit and API tests
+- Managed dependencies using pip and requirements.txt

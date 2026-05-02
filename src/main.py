@@ -12,6 +12,12 @@ from src.services import (create_trade,
 
 app = FastAPI()
 
+@app.get("/health")
+def health_check():
+    return {
+        "status": "ok"
+    }
+
 @app.post("/trades", response_model=TradeResponse)
 def create_trade_endpoint(trade: TradeCreate):
     trade_obj = EquityTrade(
