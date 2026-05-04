@@ -1,7 +1,9 @@
 import time
+import logging
+
 from fastapi import FastAPI, HTTPException, Query
 
-from src.oop_sandbox import EquityTrade, Trade
+from src.oop_sandbox import EquityTrade
 from src.db import get_connection
 from src.schemas import TradeCreate, TradeResponse, PortfolioResponse
 from src.services import (create_trade, 
@@ -11,6 +13,8 @@ from src.services import (create_trade,
                           get_portfolio_by_symbol)
 
 app = FastAPI()
+
+logging.basicConfig(level=logging.INFO)
 
 @app.get("/health")
 def health_check():
@@ -69,20 +73,24 @@ def get_trade_symbol(symbol : str):
 @app.get("/trades", response_model=list[TradeResponse])
 def get_trades_endpoint(limit: int = Query(default=5, gt=0, le=100)):
 
+    start = time.time()
+
     conn = get_connection() # get conenction
-
-
     try:
+        service_start = time.time()
         result = get_trades(conn, limit)
+        logging.info(f"Service layer took {time.time() - service_start:.4f}s")
+
 
         if not result:
             raise HTTPException(status_code=404, detail="Trades not found")
+        
+        logging.info(f"Total request took {time.time() - start:.4f}s")
         
         return result
     
     finally:
         conn.close()
-
 
 
 @app.get("/portfolio/{symbol}", response_model=PortfolioResponse)

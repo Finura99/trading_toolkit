@@ -1,7 +1,9 @@
+import time
+import logging
+
 from src.utils import reverse_string, log_execution
 from src.oop_sandbox import Trade, EquityTrade
 
-import logging
 # add input validation
 
 def validate_input(symbol: str):
@@ -26,7 +28,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
             VALUES (%s, %s, %s)
             RETURNING symbol, quantity, price;
             """,
-            (trade.symbol, trade.quantity, trade.price)
+            (trade.symbol, trade._quantity, trade.price)
         )
 
         row = cursor.fetchone() # returns as a tuple
@@ -130,7 +132,11 @@ def get_trades(conn, limit: int):
 
     cursor = conn.cursor()
 
+    query_start = time.time()
+
     try:
+        logging.info(f"DB query took {time.time() - query_start:.4f}s")
+
         cursor.execute("""
             SELECT symbol, quantity, price
             FROM trades
