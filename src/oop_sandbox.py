@@ -28,7 +28,7 @@ class EquityTrade(Trade): # inheritance...
             "symbol": self.symbol,
             "quantity": self._quantity,
             "price": self.price,
-            "trade_value": self.trade_value()
+            "trade_value": self.trade_value() # compositon
         }
 
     

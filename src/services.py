@@ -132,11 +132,9 @@ def get_trades(conn, limit: int):
 
     cursor = conn.cursor()
 
-    query_start = time.time()
+    query_start = time.time() # logging latency
 
     try:
-        logging.info(f"DB query took {time.time() - query_start:.4f}s")
-
         cursor.execute("""
             SELECT symbol, quantity, price
             FROM trades
@@ -144,12 +142,14 @@ def get_trades(conn, limit: int):
         """, (limit,)
         )
 
+        logging.info(f"DB query took {time.time() - query_start:.4f}s")
+
         rows = cursor.fetchall()
+
         result = []
 
-
         for row in rows:
-            symbol, quantity, price = row
+            symbol, quantity, price = row # positional indexing aligning with the attributes of the object
 
             trade = EquityTrade(symbol, quantity, price, "NASDAQ")
 

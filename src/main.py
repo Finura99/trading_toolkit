@@ -1,6 +1,5 @@
 import time
 import logging
-
 from fastapi import FastAPI, HTTPException, Query
 
 from src.oop_sandbox import EquityTrade
@@ -75,9 +74,10 @@ def get_trades_endpoint(limit: int = Query(default=5, gt=0, le=100)):
 
     start = time.time()
 
-    conn = get_connection() # get conenction
+    conn = get_connection() # get connection
     try:
         service_start = time.time()
+
         result = get_trades(conn, limit)
         logging.info(f"Service layer took {time.time() - service_start:.4f}s")
 
