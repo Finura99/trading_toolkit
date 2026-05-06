@@ -1,3 +1,10 @@
+import yaml
+
+with open("config.yaml", "r") as file:
+    config = yaml.safe_load(file)
+
+print(config)
+
 def reverse_string(symbol: str) -> str:
     return symbol[::-1] #reversed using a slicing method
 
@@ -13,6 +20,8 @@ def log_execution(func): #decorator
 
         return result
     return wrapper
+
+
 
 
 

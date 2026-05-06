@@ -1,10 +1,11 @@
 import psycopg2
+from src.utils import config
 
 def get_connection():
     return psycopg2.connect(
-        host="localhost",
+        host=config["database"]["host"],
         user="admin",
         password="admin",
         database="postgres_toolkit",
-        port=5432
+        port=config["database"]["port"]
     )
