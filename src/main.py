@@ -82,8 +82,10 @@ def get_trades_endpoint(limit: int = Query(default=5, gt=0, le=100)):
         logging.info(f"Service layer took {time.time() - service_start:.4f}s")
 
 
-        if not result:
-            raise HTTPException(status_code=404, detail="Trades not found")
+        # if not result:
+            # raise HTTPException(status_code=404, detail="Trades not found") 
+
+        # a 200 ok is better as request was valid for a collection endpoint where the list was empty, 404 is more appropriate for a specific item endpoint.
         
         logging.info(f"Total request took {time.time() - start:.4f}s")
         
