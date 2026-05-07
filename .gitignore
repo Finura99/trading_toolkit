@@ -1,5 +1,6 @@
 # Virtual Environment
 .venv/
+.env
 
 # Editor
 .vscode/
@@ -10,3 +11,5 @@ __pycache__/
 
 # Logs
 *.log
+
+

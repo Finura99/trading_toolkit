@@ -5,6 +5,8 @@ with open("config.yaml", "r") as file:
 
 print(config)
 
+
+
 def reverse_string(symbol: str) -> str:
     return symbol[::-1] #reversed using a slicing method
 
