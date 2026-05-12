@@ -1,6 +1,7 @@
 import time
 import logging
 from fastapi import FastAPI, HTTPException, Query
+from src.db import connection_pool
 
 from src.oop_sandbox import EquityTrade
 from src.db import get_connection
@@ -30,12 +31,12 @@ def create_trade_endpoint(trade: TradeCreate):
         "NASDAQ"
     )
 
-    conn = get_connection() # get connection
+    conn = get_connection() # uses psycopg2 
 
     try:
-        return create_trade(conn, trade_obj)
+        return create_trade(conn, trade_obj) # service layer
     finally:
-        conn.close()
+        connection_pool.putconn(conn) # use conenction pooling instead of opening and closing db connections for low db overhead
 
 
 @app.get("/portfolio", response_model=list[PortfolioResponse])
@@ -48,7 +49,7 @@ def get_trade_endpoint():
         return result
     
     finally:
-        conn.close()
+        connection_pool.putconn(conn) # returning it back in the pool instead of destroying it
 
 
 
@@ -65,7 +66,7 @@ def get_trade_symbol(symbol : str):
 
         return result # return dict
     finally:
-        conn.close() # close connection
+        connection_pool.putconn(conn) # back into the reusable pool
 
 
 
@@ -92,7 +93,7 @@ def get_trades_endpoint(limit: int = Query(default=5, gt=0, le=100)):
         return result
     
     finally:
-        conn.close()
+        connection_pool.putconn(conn)
 
 
 @app.get("/portfolio/{symbol}", response_model=PortfolioResponse)
@@ -109,4 +110,4 @@ def get_portfolio_by_symbol_endpoint(symbol: str):
         return result
     
     finally:
-        conn.close()
+        connection_pool.putconn(conn)

@@ -19,6 +19,8 @@ pydantic_core==2.46.0
 Pygments==2.20.0
 pytest==9.0.3
 python-dateutil==2.9.0.post0
+python-dotenv==1.2.2
+PyYAML==6.0.3
 six==1.17.0
 starlette==1.0.0
 typing-inspection==0.4.2

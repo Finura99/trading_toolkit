@@ -18,11 +18,10 @@ def log_execution(func): #decorator
 
         result = func(*args, **kwargs)
 
-        print(f"Finished function: {func.__name__}") # extended behaviour after------
+        print(f"Finished function: {func.__name__}") # extended behaviour after-------
 
         return result
     return wrapper
-
 
 
 
