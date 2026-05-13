@@ -15,6 +15,9 @@ def validate_input(symbol: str):
 logging.basicConfig(level=logging.INFO)
 
 
+#------------------------------------------------------------------------
+
+
 def create_trade(conn, trade: EquityTrade): # parameters 
     cursor = conn.cursor()
 

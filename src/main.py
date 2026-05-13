@@ -1,6 +1,6 @@
 import time
 import logging
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from src.db import connection_pool
 
 from src.oop_sandbox import EquityTrade
@@ -15,6 +15,22 @@ from src.services import (create_trade,
 app = FastAPI()
 
 logging.basicConfig(level=logging.INFO)
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+
+    start_time = time.time() # clock starts
+
+    response = await call_next(request) # call_next ruuns the actual endpoint
+
+    process_time = time.time() - start_time # clock stops
+
+    logging.info(f"{request.method} {request.url.path} completed in {process_time:.4f}s")
+
+    return response
+
+
+
 
 @app.get("/health")
 def health_check():
@@ -36,7 +52,7 @@ def create_trade_endpoint(trade: TradeCreate):
     try:
         return create_trade(conn, trade_obj) # service layer
     finally:
-        connection_pool.putconn(conn) # use conenction pooling instead of opening and closing db connections for low db overhead
+        connection_pool.putconn(conn) # use connection pooling instead of opening and closing db conn reducing conn overhead
 
 
 @app.get("/portfolio", response_model=list[PortfolioResponse])
