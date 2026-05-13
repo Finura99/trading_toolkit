@@ -1,8 +1,9 @@
 import time
 import logging
+import uuid
 from fastapi import FastAPI, HTTPException, Query, Request
-from src.db import connection_pool
 
+from src.db import connection_pool
 from src.oop_sandbox import EquityTrade
 from src.db import get_connection
 from src.schemas import TradeCreate, TradeResponse, PortfolioResponse
@@ -19,13 +20,21 @@ logging.basicConfig(level=logging.INFO)
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
 
+    request_id = str(uuid.uuid4())[:8] # request id for tracing middleware improving observability
+    
+
     start_time = time.time() # clock starts
 
     response = await call_next(request) # call_next ruuns the actual endpoint
 
     process_time = time.time() - start_time # clock stops
 
-    logging.info(f"{request.method} {request.url.path} completed in {process_time:.4f}s")
+    logging.info(
+        f" Request ID: {request_id} | {type(request_id)}"
+        f" {request.method} {request.url.path}"
+        f" completed in {process_time:.4f}s"
+        )
+    # request level timing
 
     return response
 
@@ -89,8 +98,7 @@ def get_trade_symbol(symbol : str):
 @app.get("/trades", response_model=list[TradeResponse])
 def get_trades_endpoint(limit: int = Query(default=5, gt=0, le=100)):
 
-    start = time.time()
-
+    
     conn = get_connection() # get connection
     try:
         service_start = time.time()
@@ -100,11 +108,9 @@ def get_trades_endpoint(limit: int = Query(default=5, gt=0, le=100)):
 
 
         # if not result:
-            # raise HTTPException(status_code=404, detail="Trades not found") 
+            # raise HTTPException(status_code=404, detail="Trades not found")
 
         # a 200 ok is better as request was valid for a collection endpoint where the list was empty, 404 is more appropriate for a specific item endpoint.
-        
-        logging.info(f"Total request took {time.time() - start:.4f}s")
         
         return result
     

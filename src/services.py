@@ -36,7 +36,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
 
         row = cursor.fetchone() # returns as a tuple
 
-        logging.info("Before Commit")        
+        logging.info("Before Commit")      
         conn.commit() # save changes - transaction handling
         logging.info("After Commit")
         
@@ -191,6 +191,10 @@ def get_portfolio_by_symbol(conn, symbol: str):
             "average_price" : row[2],
             "total_value" : row[3]
         }
+    
+    except Exception as e:
+        logging.error(f"Database error: {e}")
+        raise # added structured exception logging to improve debugging and observability
 
     finally:
-        cursor.close() # cursor clean up no matter what 
+        cursor.close() # cursor clean up no matter what...
