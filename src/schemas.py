@@ -1,15 +1,15 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class TradeCreate(BaseModel):
     symbol: str
-    quantity: float
-    price: float
+    quantity: float = Field(gt=0)
+    price: float = Field(gt=0)
 
 class TradeResponse(BaseModel):
     symbol: str
-    quantity: float
-    price: float
+    quantity: float 
+    price: float 
     trade_value: float
 
 class PortfolioResponse(BaseModel):

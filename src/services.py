@@ -1,5 +1,6 @@
 import time
 import logging
+from fastapi import HTTPException
 
 from src.utils import reverse_string, log_execution
 from src.oop_sandbox import Trade, EquityTrade
@@ -12,6 +13,8 @@ def validate_input(symbol: str):
 
     return symbol
 
+
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -22,6 +25,8 @@ def create_trade(conn, trade: EquityTrade): # parameters
     cursor = conn.cursor()
 
     try: # cursor is the tools used within the connection
+        if trade._quantity <= 0:
+            raise HTTPException(status_code=400, detail="Quantity must be positive")
         
         logging.info(f"Creating trade for symbol={trade.symbol}")
         
@@ -36,10 +41,9 @@ def create_trade(conn, trade: EquityTrade): # parameters
 
         row = cursor.fetchone() # returns as a tuple
 
-        logging.info("Before Commit")      
+        logging.info("Before Commit")
         conn.commit() # save changes - transaction handling
         logging.info("After Commit")
-        
 
         symbol, quantity, price = row
 

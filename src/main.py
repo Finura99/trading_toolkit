@@ -18,14 +18,15 @@ app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 
 @app.middleware("http")
-async def log_requests(request: Request, call_next):
+async def log_requests(request: Request, call_next): # usiung async on a function or statmeent is a coroutine.
 
     request_id = str(uuid.uuid4())[:8] # request id for tracing middleware improving observability
     
 
     start_time = time.time() # clock starts
 
-    response = await call_next(request) # call_next ruuns the actual endpoint
+    # await means pause this task until response is ready, allow other async tasks to continue
+    response = await call_next(request) # call_next runs the actual endpoint
 
     process_time = time.time() - start_time # clock stops
 
@@ -87,7 +88,7 @@ def get_trade_symbol(symbol : str):
         result = get_trades_by_symbol(conn, symbol) # service layer/business logic
     
         if not result:
-            raise HTTPException(status_code=404, detail="Trades not found")
+            raise HTTPException(status_code=404, detail="Trades not found") # no resource exists
 
         return result # return dict
     finally:
