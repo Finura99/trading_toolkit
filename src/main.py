@@ -50,6 +50,7 @@ def health_check():
 
 @app.post("/trades", response_model=TradeResponse)
 def create_trade_endpoint(trade: TradeCreate):
+    
     trade_obj = EquityTrade(
         trade.symbol,
         trade.quantity,
@@ -111,7 +112,7 @@ def get_trades_endpoint(limit: int = Query(default=5, gt=0, le=100)):
         # if not result:
             # raise HTTPException(status_code=404, detail="Trades not found")
 
-        # a 200 ok is better as request was valid for a collection endpoint where the list was empty, 404 is more appropriate for a specific item endpoint.
+        # a 200 ok is better since request was valid for a collection endpoint where the list was empty, 404 is more appropriate for a specific item endpoint.
         
         return result
     

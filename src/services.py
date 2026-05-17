@@ -15,7 +15,7 @@ def validate_input(symbol: str):
 
 
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format=str)
 
 
 #------------------------------------------------------------------------
@@ -42,7 +42,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
         row = cursor.fetchone() # returns as a tuple
 
         logging.info("Before Commit")
-        conn.commit() # save changes - transaction handling
+        conn.commit() # save changes - DB transaction handling - only used when writing/updating data 
         logging.info("After Commit")
 
         symbol, quantity, price = row
@@ -53,6 +53,12 @@ def create_trade(conn, trade: EquityTrade): # parameters
             "price" : price,
             "trade_value" : trade.trade_value()
         }
+    
+    except Exception as e:
+
+        logging.error(f"Database transaction failed: {e}")
+        conn.rollback()
+        raise
         
     
     finally:
