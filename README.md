@@ -22,6 +22,15 @@ A Python backend system with FastAPI that allows users to create and retrieve tr
 - Domain modelling with classes (OOP)
 - Unit and API Testing
 
+## Production-oriented features
+
+- Health check endpoint for uptime monitoring
+- Middleware request logging with request IDs
+- PostgreSQL connection pooling
+- yaml configuration and ".env" secret handling
+- Input validation with Pydantic
+- Layered architecture API, service, database
+
 ## How to Run
 
 1. Start Docker (Postgres)
@@ -58,11 +67,3 @@ Data flows from the API through validation and restructured into doamin objects 
 - Added unit and API tests
 - Managed dependencies using pip and requirements.txt
 
-## Production-oriented features
-
-- Health check endpoint for uptime monitoring
-- Middleware request logging with request IDs
-- PostgreSQL connection pooling
-- yaml configuration and ".env" secret handling
-- Input validation with Pydantic
-- Layered architecture API, service, database
