@@ -15,7 +15,7 @@ def validate_input(symbol: str):
 
 
 
-logging.basicConfig(level=logging.INFO, format=str)
+logging.basicConfig(level=logging.INFO)
 
 
 #------------------------------------------------------------------------

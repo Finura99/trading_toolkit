@@ -18,7 +18,7 @@ app = FastAPI()
 logging.basicConfig(level=logging.INFO)
 
 @app.middleware("http")
-async def log_requests(request: Request, call_next): # usiung async on a function or statmeent is a coroutine.
+async def log_requests(request: Request, call_next): # using async on a function or statement is a coroutine.
 
     request_id = str(uuid.uuid4())[:8] # request id for tracing middleware improving observability
     
