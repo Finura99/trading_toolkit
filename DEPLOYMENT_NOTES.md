@@ -55,3 +55,20 @@ A simple EC2 deployment could work as follows:
 7. Connect the app to PostgreSQL thats hosted on RDS
 
 EC2 gives more direct control to the server/instance, but also requires more manual setup and maintenance compared with ECS. (Will approach it initally with the instance and see how ECS makes a difference)
+
+## RDS Deployment Model
+
+Amazon RDS can host PostgreSQL as a managed production database.
+
+In local development, PostgreSQL runs inside Docker. In a production-style AWS setup, the application would connect to PostgreSQL hosted on RDS instead.
+
+A basic RDS setup would work as follows:
+
+1. Create an RDS PostgreSQL database.
+2. Store the RDS host, port, database name, username, and password as environment variables.
+3. Configure the FastAPI application to read those values from the environment.
+4. The FastAPI app connects to RDS instead of local Docker PostgreSQL.
+5. RDS handles database persistence, backups, storage, and managed database operations.
+
+RDS is useful because production databases need reliable persistence and operational management, while Docker is better suited for local development or running stateless application containers.
+
