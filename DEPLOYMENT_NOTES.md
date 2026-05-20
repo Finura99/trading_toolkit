@@ -72,3 +72,18 @@ A basic RDS setup would work as follows:
 
 RDS is useful because production databases need reliable persistence and operational management, while Docker is better suited for local development or running stateless application containers.
 
+## ECR Deployment Model
+
+Amazon ECR is a container image registry used to store Docker images.
+
+In a production-style setup, the FastAPI application could be packaged into a Docker image and pushed to ECR. EC2 or ECS could then pull that image and run the application.
+
+A basic ECR flow would work as follows:
+
+1. Write a Dockerfile for the FastAPI application.
+2. Build the Docker image locally or through a CI/CD pipeline.
+3. Push the image to Amazon ECR.
+4. EC2 or ECS pulls the image from ECR.
+5. The application runs from the same packaged image across environments.
+
+ECR helps make deployments more reproducible because the application, dependencies, and startup command are packaged together inside the Docker image.
