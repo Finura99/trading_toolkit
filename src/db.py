@@ -6,20 +6,15 @@ from src.utils import config
 
 load_dotenv() # reads the .env file and loads all variables
 
-DB_USER = os.getenv("DB_USER") # get env variables from .env
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-
-
-
 
 connection_pool = pool.SimpleConnectionPool(
-    1, # minimum connections
-    10, # maximum connections
-    host=config["database"]["host"],
-    user=DB_USER,
-    password=DB_PASSWORD,
-    database="postgres_toolkit",
-    port=config["database"]["port"]
+    1, # min connections
+    10, # max connections
+    host=os.getenv("DB_HOST", "localhost"),
+    port=os.getenv("DB_PORT", "5432"),
+    database=os.getenv("DB_NAME", "postgres_toolkit"),
+    user=os.getenv("DB_USER"),
+    password=os.getenv("DB_PASSWORD"),
 )
 
 def get_connection():

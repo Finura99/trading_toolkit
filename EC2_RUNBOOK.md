@@ -23,3 +23,28 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r 'requirements.txt'
 uvicorn src.main:app --host 0.0.0.0 --port 8000
+```
+
+## RDS Connection Notes
+
+In local development, the FastAPI application connects to PostgreSQL running in Docker.
+
+In a production-style EC2 setup, the application would connect to PostgreSQL hosted on Amazon RDS.
+
+The application should not hardcode database credentials. Instead, it should read database settings from environment variables:
+
+- DB_HOST
+- DB_PORT
+- DB_NAME
+- DB_USER
+- DB_PASSWORD
+
+This allows the same application code to run in different environments by changing configuration rather than changing source code.
+
+Local example:
+
+- DB_HOST=localhost
+
+Production example:
+
+- DB_HOST=my-database.xxxxxx.eu-west-2.rds.amazonaws.com
