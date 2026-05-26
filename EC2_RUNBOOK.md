@@ -48,3 +48,7 @@ Local example:
 Production example:
 
 - DB_HOST=my-database.xxxxxx.eu-west-2.rds.amazonaws.com
+
+## EC2 Deployment Test
+
+The FastAPI Docker image was pushed onto ECR, pulled onto an EC2 Ubuntu instance, and run as a container. A postgres container was created and started on the same docker network and the API successfully returned data from the "/trades" endpoint when called from external traffic through EC2 public ID on port 8000.
