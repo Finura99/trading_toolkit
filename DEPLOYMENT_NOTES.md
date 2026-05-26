@@ -86,4 +86,4 @@ A basic ECR flow would work as follows:
 4. EC2 or ECS pulls the image from ECR.
 5. The application runs from the same packaged image across environments.
 
-ECR helps make deployments more reproducible because the application, dependencies, and startup command are packaged together inside the Docker image.
+ECR helps make deployments more reproducible because the application, dependencies, and startup command are packaged together inside the Docker image
