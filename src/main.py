@@ -58,7 +58,7 @@ def create_trade_endpoint(trade: TradeCreate):
         "NASDAQ"
     )
 
-    conn = get_connection() # uses psycopg2 
+    conn = get_connection() # uses psycopg2
 
     try:
         return create_trade(conn, trade_obj) # service layer
@@ -83,7 +83,7 @@ def get_trade_endpoint():
 @app.get("/trades/{symbol}", response_model=list[TradeResponse])
 def get_trade_symbol(symbol : str):
 
-    conn = get_connection() # get connection 
+    conn = get_connection() # get connection
 
     try:
         result = get_trades_by_symbol(conn, symbol) # service layer/business logic
