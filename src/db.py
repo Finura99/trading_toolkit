@@ -19,3 +19,23 @@ connection_pool = pool.SimpleConnectionPool(
 
 def get_connection():
     return connection_pool.getconn()
+
+def check_db_connection() -> bool:
+    conn = None
+
+    try:
+        conn = connection_pool.getconn()
+
+        with conn.cursor() as cursor: #.cursor is the toiol for sql to amend the data
+            cursor.execute("SELECT 1;")
+            cursor.fetchone()
+
+        return True
+    
+    except Exception:
+        return False
+    
+    finally:
+        if conn:
+            connection_pool.putconn(conn) # puts the conenction back to the pool
+            

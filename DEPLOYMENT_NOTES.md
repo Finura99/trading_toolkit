@@ -87,3 +87,15 @@ A basic ECR flow would work as follows:
 5. The application runs from the same packaged image across environments.
 
 ECR helps make deployments more reproducible because the application, dependencies, and startup command are packaged together inside the Docker image
+
+## Load balancer
+
+Today I completed the ALB route:
+Laptop → ALB → EC2 FastAPI container → RDS PostgreSQL.
+
+The target group became healthy after fixing security group rules.
+
+Main lesson:
+Load balancer port 80 is the public entry point.
+EC2 port 8000 is the backend app port.
+RDS port 5432 is the database port.

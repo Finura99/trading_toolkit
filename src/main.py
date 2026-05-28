@@ -3,7 +3,7 @@ import logging
 import uuid
 from fastapi import FastAPI, HTTPException, Query, Request
 
-from src.db import connection_pool
+from src.db import connection_pool, check_db_connection
 from src.oop_sandbox import EquityTrade
 from src.db import get_connection
 from src.schemas import TradeCreate, TradeResponse, PortfolioResponse
@@ -45,8 +45,23 @@ async def log_requests(request: Request, call_next): # using async on a function
 @app.get("/health")
 def health_check():
     return {
-        "status": "ok"
+        "status": "ok" # is the fastapi process alive?
     }
+
+@app.get("/readiness") # can the app serve database backed requests/queries?
+def readiness_check():
+
+    if check_db_connection():
+        return {
+            "status": "ok",
+            "database": "active"
+        }
+    raise HTTPException(
+        status_code=503, 
+        detail={
+        "status": "not_ready",
+        "database": "unavailable"
+    })
 
 @app.post("/trades", response_model=TradeResponse)
 def create_trade_endpoint(trade: TradeCreate):
