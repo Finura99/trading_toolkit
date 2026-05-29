@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS trades (
+    id SERIAL PRIMARY KEY,
+    symbol TEXT UNIQUE NOT NULL,
+    quantity FLOAT NOT NULL,
+    price FLOAT NOT NULL
+);

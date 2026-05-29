@@ -66,7 +66,7 @@ def readiness_check():
 @app.post("/trades", response_model=TradeResponse)
 def create_trade_endpoint(trade: TradeCreate):
     
-    trade_obj = EquityTrade(
+    trade_obj = EquityTrade( # inheritance applied here
         trade.symbol,
         trade.quantity,
         trade.price,

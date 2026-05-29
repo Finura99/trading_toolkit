@@ -37,5 +37,5 @@ def check_db_connection() -> bool:
     
     finally:
         if conn:
-            connection_pool.putconn(conn) # puts the conenction back to the pool
+            connection_pool.putconn(conn) # puts the connection back to the pool
             
