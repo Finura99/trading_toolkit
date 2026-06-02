@@ -48,7 +48,7 @@ class TradeFeeCalculator:
     
 
 class TradeProcessor:
-    def __init__(self, validator: TradeValidator, fee_calculator: TradeFeeCalculator):
+    def __init__(self, validator: TradeValidator, fee_calculator: TradeFeeCalculator): # composition here
         self.validator = validator
         self.fee_calculator = fee_calculator
 
@@ -65,4 +65,13 @@ class TradeProcessor:
             "net_value": trade.notional_value() - fee
         }
     
-    ################## domain object
+    ################## domain object with composition
+
+@dataclass
+class EquityTrade(Trade):
+    exchange: str
+
+    def market(self) -> str:
+        return f"{self.symbol} trades on {self.exchange}"
+    
+    ## this means equitytrade inherits from trade

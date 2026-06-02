@@ -1,6 +1,6 @@
 import pytest
 
-from src.domain import Trade, TradeValidator, TradeFeeCalculator, TradeProcessor
+from src.domain import Trade, TradeValidator, TradeFeeCalculator, TradeProcessor, EquityTrade
 
 
 def test_trade_calculates_notional_value():
@@ -70,3 +70,10 @@ def test_trade_processor_trade():
         "fee": 1.5,
         "net_value": 1498.5,
     }
+
+def test_equity_trade_inherits_trade_behaviour():
+    trade = EquityTrade(symbol="MSFT", quantity=5, price=300, exchange="NASDAQ")
+
+    assert trade.market() == f"{trade.symbol} trades on {trade.exchange}"
+
+    
