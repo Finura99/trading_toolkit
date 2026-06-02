@@ -22,7 +22,6 @@ async def log_requests(request: Request, call_next): # using async on a function
 
     request_id = str(uuid.uuid4())[:8] # request id for tracing middleware improving observability
     
-
     start_time = time.time() # clock starts
 
     # await means pause this task until response is ready, allow other async tasks to continue
