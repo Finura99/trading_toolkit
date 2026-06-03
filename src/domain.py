@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from abc import ABC, abstractmethod
 
 
 @dataclass
@@ -6,6 +7,8 @@ class Trade:
     symbol: str
     quantity: float
     price: float
+
+    # Encapsulation = Trade keeps symbol, quantity, price and validation together
 
     def __post_init__(self):
         self.symbol = self.symbol.strip().upper()
@@ -42,22 +45,36 @@ class TradeValidator:
         
         
 
-class TradeFeeCalculator:
-    def calculate_fee(self, trade: Trade) -> float:
-        return trade.notional_value() * 0.001 ## isnt this compositon since its bringing in our base class as an obj?
-    
+class FeeCalculator(ABC):
+    @abstractmethod
+    def calculate_fee(self, trade: Trade): 
+        pass
+    # FeeCalculator defines expected behaviour without exposing implementation details
+    # this tells us that any object/class using method calculate fee must adhere to its signature parameters and method name.
+    # abstraction applied here
+    # essentially like an api contract
 
-class PercentageFeeCalculator:
+class TradeFeeCalculator(FeeCalculator):
+    def calculate_fee(self, trade: Trade) -> float:
+        return trade.notional_value() * 0.001
+    ## isnt this compositon since its bringing in our base class as an obj?
+
+
+class PercentageFeeCalculator(FeeCalculator):
     def calculate_fee(self, trade: Trade) -> float:
         return trade.notional_value() * 0.001
     
-class FixedFeeCalculator:
+class FixedFeeCalculator(FeeCalculator):
     def calculate_fee(self, trade: Trade) -> float:
         return 2.50
     
+# Polymorphism = FixedFee and PercentageFee use calculate fee method differently 
+    
+
+
 
 class TradeProcessor:
-    def __init__(self, validator: TradeValidator, fee_calculator: TradeFeeCalculator): # composition here
+    def __init__(self, validator: TradeValidator, fee_calculator: PercentageFeeCalculator): # composition here
         self.validator = validator
         self.fee_calculator = fee_calculator
         ## fields to be then turned into objects for use
@@ -75,14 +92,15 @@ class TradeProcessor:
             "fee": fee,
             "net_value": trade.notional_value() - fee
         }
-    
-    ################## domain object with composition
+# Composition = TradeProcessor has a fee calculator object/s from another class
+
+
 
 @dataclass
-class EquityTrade(Trade):
+class EquityTrade(Trade): # Inheritance because equitytrade is a specialised trade of the base class.
     exchange: str
 
     def market(self) -> str:
         return f"{self.symbol} trades on {self.exchange}"
-    
-    ## this means equitytrade inherits from trade
+
+

@@ -3,11 +3,11 @@ import pytest
 from src.domain import (
                         Trade, 
                         TradeValidator, 
-                        TradeFeeCalculator, 
                         TradeProcessor, 
                         EquityTrade,
                         PercentageFeeCalculator,
-                        FixedFeeCalculator
+                        FixedFeeCalculator,
+                        TradeFeeCalculator
                         )
 
 
@@ -67,7 +67,7 @@ def test_trade_processor_trade():
 
     processor = TradeProcessor(
         validator=TradeValidator(),
-        fee_calculator=TradeFeeCalculator(),
+        fee_calculator=PercentageFeeCalculator(),
     )
 
     result = processor.process(trade)

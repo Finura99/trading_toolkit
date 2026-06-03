@@ -3,7 +3,7 @@ import logging
 from fastapi import HTTPException
 
 from src.utils import reverse_string, log_execution
-from src.oop_sandbox import Trade, EquityTrade
+from src.domain import Trade, EquityTrade
 
 # add input validation
 
@@ -23,9 +23,10 @@ logging.basicConfig(level=logging.INFO)
 
 def create_trade(conn, trade: EquityTrade): # parameters 
     cursor = conn.cursor()
+    # cursor is the sql tool used within the connection
 
-    try: # cursor is the tools used within the connection
-        if trade._quantity <= 0:
+    try: 
+        if trade.quantity <= 0:
             raise HTTPException(status_code=400, detail="Quantity must be positive")
         
         logging.info(f"Creating trade for symbol={trade.symbol}")
@@ -36,7 +37,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
             VALUES (%s, %s, %s)
             RETURNING symbol, quantity, price;
             """,
-            (trade.symbol, trade._quantity, trade.price)
+            (trade.symbol, trade.quantity, trade.price)
         )
 
         row = cursor.fetchone() # returns as a tuple
@@ -51,7 +52,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
             "symbol" : symbol,
             "quantity": quantity,
             "price" : price,
-            "trade_value" : trade.trade_value()
+            "trade_value" : trade.notional_value(),
         }
     
     except Exception as e:
@@ -97,7 +98,7 @@ def get_portfolio(conn): # aggregates the trade data into a overview for the cli
 # generator
 def generate_trade(rows):
 
-    trade = Trade.trade_value() # invoke the class as it promotes reusability.
+    trade = Trade.notional_value() # invoke the class as it promotes reusability.
 
     for row in rows: # lazy sequencing, has a stop iterator
         yield {
@@ -128,14 +129,16 @@ def get_trades_by_symbol(conn, symbol: str):
 
     for row in rows:
 
-        trade = Trade(row[0], row[1], row[2]) # used a class to rep a trade object for extendability instead of raw dict.
+        trade = Trade(symbol=row[0], 
+                      quantity=row[1], 
+                      price=row[2],
+                      ) # used a class to rep a trade object for extendability instead of raw dict.
 
         result.append({
             "symbol" : trade.symbol,
-            "reversed_symbol": reverse_string(row[0]), # first element of the tuple
-            "quantity" : trade._quantity,
+            "quantity" : trade.quantity,
             "price" : trade.price,
-            "trade_value": trade.trade_value()
+            "trade_value": trade.notional_value()
         }) 
 
     return result
@@ -166,7 +169,12 @@ def get_trades(conn, limit: int):
 
             trade = EquityTrade(symbol, quantity, price, "NASDAQ")
 
-            result.append(trade.to_dict()) # method inside equity class
+            result.append({
+                "symbol": trade.symbol,
+                "quantity": trade.quantity,
+                "price": trade.price,
+                "trade_value": trade.notional_value(),
+            })
 
         return result
 

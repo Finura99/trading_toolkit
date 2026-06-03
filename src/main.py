@@ -4,8 +4,8 @@ import uuid
 from fastapi import FastAPI, HTTPException, Query, Request
 
 from src.db import connection_pool, check_db_connection
-from src.oop_sandbox import EquityTrade
 from src.db import get_connection
+from src.domain import EquityTrade
 from src.schemas import TradeCreate, TradeResponse, PortfolioResponse
 from src.services import (create_trade, 
                           get_portfolio,
@@ -66,10 +66,10 @@ def readiness_check():
 def create_trade_endpoint(trade: TradeCreate):
     
     trade_obj = EquityTrade( # inheritance applied here
-        trade.symbol,
-        trade.quantity,
-        trade.price,
-        "NASDAQ"
+        symbol=trade.symbol,
+        quantity=trade.quantity,
+        price=trade.price,
+        exchange="NASDAQ",
     )
 
     conn = get_connection() # uses psycopg2
