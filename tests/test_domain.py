@@ -1,6 +1,14 @@
 import pytest
 
-from src.domain import Trade, TradeValidator, TradeFeeCalculator, TradeProcessor, EquityTrade
+from src.domain import (
+                        Trade, 
+                        TradeValidator, 
+                        TradeFeeCalculator, 
+                        TradeProcessor, 
+                        EquityTrade,
+                        PercentageFeeCalculator,
+                        FixedFeeCalculator
+                        )
 
 
 def test_trade_calculates_notional_value():
@@ -76,4 +84,30 @@ def test_equity_trade_inherits_trade_behaviour():
 
     assert trade.market() == f"{trade.symbol} trades on {trade.exchange}"
 
-    
+
+def test_trade_processor_uses_percentage_fees():
+    trade = Trade(symbol="AAPL", quantity=10, price=150)
+
+    processor = TradeProcessor(
+        validator=TradeValidator(),
+        fee_calculator=PercentageFeeCalculator()
+    )
+
+    result = processor.process(trade)
+
+    assert result["fee"] == 1.5
+    assert result["net_value"] == 1498.5
+
+
+def test_trade_processor_uses_fixed_fee_processor():
+    trade = Trade(symbol="AAPL", quantity=10, price=150)
+
+    processor = TradeProcessor(
+        validator=TradeValidator(),
+        fee_calculator=FixedFeeCalculator()
+    )
+
+    result = processor.process(trade)
+
+    assert result["fee"] == 2.5
+    assert result["net_value"] == 1497.5

@@ -10,6 +10,7 @@ class Trade:
     def set_quantity(self, value: float): # enforce valdiation rules on quantity instead of modifying it directly...
         if value < 0:
             raise ValueError("Quantity is not positive")
+        
         self._quantity = value
 
 

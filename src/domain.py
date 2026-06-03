@@ -43,20 +43,31 @@ class TradeValidator:
         
 
 class TradeFeeCalculator:
-    def calculate_fee(self, trade: Trade) -> bool:
+    def calculate_fee(self, trade: Trade) -> float:
         return trade.notional_value() * 0.001 ## isnt this compositon since its bringing in our base class as an obj?
+    
+
+class PercentageFeeCalculator:
+    def calculate_fee(self, trade: Trade) -> float:
+        return trade.notional_value() * 0.001
+    
+class FixedFeeCalculator:
+    def calculate_fee(self, trade: Trade) -> float:
+        return 2.50
     
 
 class TradeProcessor:
     def __init__(self, validator: TradeValidator, fee_calculator: TradeFeeCalculator): # composition here
         self.validator = validator
         self.fee_calculator = fee_calculator
+        ## fields to be then turned into objects for use
 
 
-    def process(self, trade: Trade):
+    def process(self, trade: Trade) -> dict:
         self.validator.validate(trade)
 
         fee = self.fee_calculator.calculate_fee(trade)
+        ## polymorphism through composition
 
         return {
             "symbol": trade.symbol,
