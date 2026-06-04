@@ -67,9 +67,13 @@ class PercentageFeeCalculator(FeeCalculator):
 class FixedFeeCalculator(FeeCalculator):
     def calculate_fee(self, trade: Trade) -> float:
         return 2.50
+
+class ZeroFeeCalculator(FeeCalculator):
+    def calculate_fee(self, trade: Trade) -> float:
+        return 0.0
+
     
-# Polymorphism = FixedFee and PercentageFee use calculate fee method differently 
-    
+# Polymorphism = FixedFee and PercentageFee use calculate fee method differently
 
 
 

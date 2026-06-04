@@ -7,7 +7,8 @@ from src.domain import (
                         EquityTrade,
                         PercentageFeeCalculator,
                         FixedFeeCalculator,
-                        TradeFeeCalculator
+                        TradeFeeCalculator,
+                        ZeroFeeCalculator
                         )
 
 
@@ -111,3 +112,20 @@ def test_trade_processor_uses_fixed_fee_processor():
 
     assert result["fee"] == 2.5
     assert result["net_value"] == 1497.5
+
+def test_zero_fee_calculator():
+    trade = Trade(symbol="AAPL", quantity=10, price=150)
+
+    calculator = ZeroFeeCalculator() 
+    # object stored in that variable
+
+    assert calculator.calculate_fee(trade) == 0
+
+def test_trade_processor_uses_zero_fee():
+    trade = Trade(symbol="AAPL", quantity=10, price=150)
+
+    processor = TradeProcessor(validator=TradeValidator(), fee_calculator=ZeroFeeCalculator())
+
+    result = processor.process(trade)
+
+    assert result["fee"] == 0.0

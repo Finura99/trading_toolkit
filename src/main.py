@@ -56,7 +56,7 @@ def readiness_check():
             "database": "active"
         }
     raise HTTPException(
-        status_code=503, 
+        status_code=503,
         detail={
         "status": "not_ready",
         "database": "unavailable"
