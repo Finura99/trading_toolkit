@@ -49,10 +49,13 @@ class FeeCalculator(ABC):
     @abstractmethod
     def calculate_fee(self, trade: Trade): 
         pass
+
     # FeeCalculator defines expected behaviour without exposing implementation details
     # this tells us that any object/class using method calculate fee must adhere to its signature parameters and method name.
     # abstraction applied here
     # essentially like an api contract
+
+
 
 class TradeFeeCalculator(FeeCalculator):
     def calculate_fee(self, trade: Trade) -> float:
@@ -85,10 +88,10 @@ class TradeProcessor:
 
 
     def process(self, trade: Trade) -> dict:
-        self.validator.validate(trade)
+        self.validator.validate(trade) # validates the trade
 
-        fee = self.fee_calculator.calculate_fee(trade)
-        ## polymorphism through composition
+        fee = self.fee_calculator.calculate_fee(trade) # delegates fee calculation
+        ## using the objects method ergo composition and polymorphism in the method
 
         return {
             "symbol": trade.symbol,
@@ -96,7 +99,7 @@ class TradeProcessor:
             "fee": fee,
             "net_value": trade.notional_value() - fee
         }
-# Composition = TradeProcessor has a fee calculator object/s from another class
+# Composition = TradeProcessor uses a fee calculator object/s from another class
 
 
 
