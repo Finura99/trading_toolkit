@@ -1,15 +1,23 @@
-def log_execution(func):
-    def wrapper():
-        print (f"Starting function... {func.__name__}")
-        func()
-        print(f"Finished function... {func.__name__}")
 
+def log_execution(obj):
+    def wrapper(*args, **kwargs): 
+        # *args are variable arguments stored in a tuple.
+        # kwrgs are variable key word arguments stored in a dict.
+        print(f"Started {obj.__name__}") # before behaviour
+        result = obj(*args,**kwargs)
+        print(f"Stopped {obj.__name__}") # after behaviour
+        
+        return result
+        
+    
     return wrapper
 
-    
+
 
 @log_execution
-def say_hello():
-    print("Hello")
+def calculate_fee(price):
+    return price * 0.01
 
-say_hello()
+
+print(calculate_fee(100))
+

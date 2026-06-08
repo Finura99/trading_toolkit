@@ -99,7 +99,7 @@ class TradeProcessor:
             "fee": fee,
             "net_value": trade.notional_value() - fee
         }
-# Composition = TradeProcessor uses a fee calculator object/s from another class
+# Composition = TradeProcessor uses a fee calculator object/s from another class.
 
 
 
