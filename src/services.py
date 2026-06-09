@@ -95,19 +95,23 @@ def get_portfolio(conn): # aggregates the trade data into a overview for the cli
 
     return result
 
+
+
 # generator
-def generate_trade(rows):
+def generate_trade_responses(rows): # helper generator function
+    for row in rows:
+        symbol, quantity, price = row
 
-    trade = Trade.notional_value() # invoke the class as it promotes reusability.
+        trade = Trade(symbol=symbol, quantity=quantity, price=price)
 
-    for row in rows: # lazy sequencing, has a stop iterator
         yield {
-            "symbol": row[0],
-            "quantity" : row[1],
-            "price": row[2],
-            "trade_value" : trade
-        }
-    return list(generate_trade(rows))
+            "symbol": trade.symbol,
+            "quantity": trade.quantity,
+            "price": trade.price,
+            "trade_value": trade.notional_value(),
+        } # pauses every call and resumes where it left off...
+# single source of truth for turning DB rows into API response dictionairies.
+
 
 
 def get_trades_by_symbol(conn, symbol: str):
@@ -129,7 +133,7 @@ def get_trades_by_symbol(conn, symbol: str):
 
     for row in rows:
 
-        trade = Trade(symbol=row[0], 
+        trade = Trade(symbol=row[0],
                       quantity=row[1], 
                       price=row[2],
                       ) # used a class to rep a trade object for extendability instead of raw dict.
@@ -139,7 +143,7 @@ def get_trades_by_symbol(conn, symbol: str):
             "quantity" : trade.quantity,
             "price" : trade.price,
             "trade_value": trade.notional_value()
-        }) 
+        })
 
     return result
 
@@ -162,21 +166,7 @@ def get_trades(conn, limit: int):
 
         rows = cursor.fetchall()
 
-        result = []
-
-        for row in rows:
-            symbol, quantity, price = row # positional indexing aligning with the attributes of the object
-
-            trade = EquityTrade(symbol, quantity, price, "NASDAQ")
-
-            result.append({
-                "symbol": trade.symbol,
-                "quantity": trade.quantity,
-                "price": trade.price,
-                "trade_value": trade.notional_value(),
-            })
-
-        return result
+        return list(generate_trade_responses(rows))
 
     finally:
         cursor.close()
@@ -216,3 +206,13 @@ def get_portfolio_by_symbol(conn, symbol: str):
 
     finally:
         cursor.close() # cursor clean up no matter what...
+
+trades = ["AAPL", "NVDA"]
+
+iterator = iter(trades)
+
+print(next(iterator))
+print(next(iterator))
+
+## prints "AAPL"
+## prints "NVDA"

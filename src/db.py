@@ -3,8 +3,18 @@ import os
 
 from dotenv import load_dotenv
 from src.utils import config
+from contextlib import contextmanager
 
 load_dotenv() # reads the .env file and loads all variables
+
+@contextmanager
+def db_connection():
+    conn = connection_pool.getconn()
+
+    try:
+        yield conn
+    finally:
+        connection_pool.putconn(conn)
 
 
 connection_pool = pool.SimpleConnectionPool(

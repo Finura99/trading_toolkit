@@ -21,3 +21,15 @@ def calculate_fee(price):
 
 print(calculate_fee(100))
 
+
+
+def count():
+    yield 1 # pauses every time yield is called
+    yield 2
+    yield 3
+
+gen = count() # generator object
+
+print(next(gen))
+print(next(gen))
+print(next(gen))

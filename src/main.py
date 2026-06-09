@@ -3,7 +3,8 @@ import logging
 import uuid
 from fastapi import FastAPI, HTTPException, Query, Request
 
-from src.db import connection_pool, check_db_connection
+
+from src.db import connection_pool, check_db_connection, db_connection
 from src.db import get_connection
 from src.domain import EquityTrade
 from src.schemas import TradeCreate, TradeResponse, PortfolioResponse
@@ -114,24 +115,13 @@ def get_trade_symbol(symbol : str):
 @app.get("/trades", response_model=list[TradeResponse])
 def get_trades_endpoint(limit: int = Query(default=5, gt=0, le=100)):
 
-    
-    conn = get_connection() # get connection
-    try:
+    with db_connection() as conn:
         service_start = time.time()
 
         result = get_trades(conn, limit)
         logging.info(f"Service layer took {time.time() - service_start:.4f}s")
 
-
-        # if not result:
-            # raise HTTPException(status_code=404, detail="Trades not found")
-
-        # a 200 ok is better since request was valid for a collection endpoint where the list was empty, 404 is more appropriate for a specific item endpoint.
-        
         return result
-    
-    finally:
-        connection_pool.putconn(conn)
 
 
 @app.get("/portfolio/{symbol}", response_model=PortfolioResponse)
