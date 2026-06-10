@@ -56,12 +56,10 @@ def create_trade(conn, trade: EquityTrade): # parameters
         }
     
     except Exception as e:
-
         logging.error(f"Database transaction failed: {e}")
         conn.rollback()
-        raise
+        raise 
         
-    
     finally:
         cursor.close()
 
