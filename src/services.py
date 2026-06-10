@@ -206,13 +206,4 @@ def get_portfolio_by_symbol(conn, symbol: str):
 
     finally:
         cursor.close() # cursor clean up no matter what...
-
-trades = ["AAPL", "NVDA"]
-
-iterator = iter(trades)
-
-print(next(iterator))
-print(next(iterator))
-
-## prints "AAPL"
-## prints "NVDA"
+        
