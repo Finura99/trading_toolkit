@@ -38,7 +38,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
             RETURNING symbol, quantity, price;
             """,
             (trade.symbol, trade.quantity, trade.price)
-        )
+        ) # db call ?
 
         row = cursor.fetchone() # returns as a tuple
 
@@ -64,7 +64,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
         cursor.close()
 
 
-def get_portfolio(conn): # aggregates the trade data into a overview for the client to get detailed info of their portfolio.
+def get_portfolio(conn): # aggregates the trade data into an overview for the client to get detailed info of their portfolio.
 
     cursor = conn.cursor()
 
@@ -204,4 +204,7 @@ def get_portfolio_by_symbol(conn, symbol: str):
 
     finally:
         cursor.close() # cursor clean up no matter what...
+
+
+
         

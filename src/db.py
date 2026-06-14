@@ -36,7 +36,7 @@ def check_db_connection() -> bool:
     try:
         conn = connection_pool.getconn()
 
-        with conn.cursor() as cursor: #.cursor is the toiol for sql to amend the data
+        with conn.cursor() as cursor: #.cursor is the tool for sql to amend the data
             cursor.execute("SELECT 1;")
             cursor.fetchone()
 

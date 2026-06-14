@@ -96,12 +96,12 @@ def get_trade_endpoint():
 
 
 @app.get("/trades/{symbol}", response_model=list[TradeResponse])
-def get_trade_symbol(symbol : str):
+def get_trade_symbol(symbol : str): # (api/schema/API validation)
 
     conn = get_connection() # get connection
 
     try:
-        result = get_trades_by_symbol(conn, symbol) # service layer/business logic
+        result = get_trades_by_symbol(conn, symbol) # service layer/business logic and its I/O bound
     
         if not result:
             raise HTTPException(status_code=404, detail="Trades not found") # no resource exists
