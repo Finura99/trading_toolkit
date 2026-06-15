@@ -98,7 +98,7 @@ def get_trade_endpoint():
 @app.get("/trades/{symbol}", response_model=list[TradeResponse])
 def get_trade_symbol(symbol : str): # (api/schema/API validation)
 
-    conn = get_connection() # get connection
+    conn = get_connection() # get connection withouth using the ocntext manager...for now
 
     try:
         result = get_trades_by_symbol(conn, symbol) # service layer/business logic and its I/O bound
@@ -139,3 +139,12 @@ def get_portfolio_by_symbol_endpoint(symbol: str):
     
     finally:
         connection_pool.putconn(conn)
+
+
+    # with db_connection() as conn:
+    #     result = get_portfolio_by_symbol(conn,symbol)
+
+    #     if not result:
+    #         raise HTTPException(status_code=404, detail="Portfolio position not found")
+        
+    #     return result
