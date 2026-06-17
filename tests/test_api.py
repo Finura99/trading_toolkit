@@ -13,3 +13,9 @@ def test_get_trades_invalid_limit_returns_422():
     response = client.get("/trades?limit=101")
 
     assert response.status_code == 422
+
+def test_get_portfolio_missing_symbol_returns_422():
+    response = client.get("/portfolio/DOESNOTEXIST")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Portfolio position not found"
