@@ -169,9 +169,19 @@ def get_trades(conn, limit: int):
     finally:
         cursor.close()
 
+
+def portfolio_row_to_dict(row): # Helper function
+    return {
+        "symbol": row[0],
+        "total_quantity": row[1],
+        "average_price": row[2],
+        "total_value": row[3],
+    }
+
+
 def get_portfolio_by_symbol(conn, symbol: str):
 
-    cursor = conn.cursor()
+    cursor = conn.cursor() # creates the tool from an already open db conn
 
     try:
         cursor.execute("""
@@ -186,17 +196,12 @@ def get_portfolio_by_symbol(conn, symbol: str):
         """,
         (symbol,))
 
-        row = cursor.fetchone()
+        row = cursor.fetchone() #fetches what we executed...
 
         if row is None:
-            return None
+            return None # edge case...
 
-        return {
-            "symbol": row[0],
-            "total_quantity": row[1],
-            "average_price" : row[2],
-            "total_value" : row[3]
-        }
+        return portfolio_row_to_dict(row)
     
     except Exception as e:
         logging.error(f"Database error: {e}")
@@ -204,6 +209,8 @@ def get_portfolio_by_symbol(conn, symbol: str):
 
     finally:
         cursor.close() # cursor clean up no matter what...
+
+
 
 
 
