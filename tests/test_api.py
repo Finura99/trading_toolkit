@@ -18,4 +18,4 @@ def test_get_portfolio_missing_symbol_returns_422():
     response = client.get("/portfolio/DOESNOTEXIST")
 
     assert response.status_code == 404
-    assert response.json()["detail"] == "Portfolio position not found"
+    assert response.json()["detail"] == "Portfolio position not found" # more tests can be added for other endpoints and scenarios as needed
