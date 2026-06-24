@@ -8,7 +8,8 @@ from src.domain import (
                         PercentageFeeCalculator,
                         FixedFeeCalculator,
                         TradeFeeCalculator,
-                        ZeroFeeCalculator
+                        ZeroFeeCalculator,
+                        TradeSide
                         )
 
 
@@ -129,3 +130,10 @@ def test_trade_processor_uses_zero_fee():
     result = processor.process(trade)
 
     assert result["fee"] == 0.0
+
+
+def test_buy_trade_has_positive_signed_quantity():
+    trade = Trade(symbol="AAPL", quantity=10, price=100, side=TradeSide.BUY)
+
+    assert trade.signed_quantity() == 10
+    
