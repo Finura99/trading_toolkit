@@ -1,5 +1,10 @@
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
+from enum import Enum
+
+class TradeSide(str, Enum): # create an enum for controlled list of valid values
+    BUY = "BUY"
+    SELL = "SELL"
 
 
 @dataclass
@@ -7,6 +12,7 @@ class Trade:
     symbol: str
     quantity: float
     price: float
+    side: TradeSide = TradeSide.BUY
 
     # Encapsulation = Trade keeps symbol, quantity, price and validation together
 
@@ -22,13 +28,22 @@ class Trade:
         if self.price <= 0:
             raise ValueError("Price should be a positive value")
         
+        if isinstance(self.side, str):
+            self.side = TradeSide(self.side.upper())
+        
 
-    def __str__(self) -> str:
+
+    def __str__(self) -> str: # dunder method
         return f"{self.symbol}: {self.quantity:g} @ {self.price:g}"
 
 
-    def notional_value(self) -> float:
+    def notional_value(self) -> float: # concrete method
         return self.quantity * self.price
+    
+    def signed_quantity(self) -> float:
+        if self.side == TradeSide.BUY:
+            return self.quantity
+        return -self.quantity
 
 
 
@@ -105,9 +120,9 @@ class TradeProcessor:
 
 @dataclass
 class EquityTrade(Trade): # Inheritance because equitytrade is a specialised trade of the base class.
-    exchange: str
+    exchange: str = "NASDAQ"
 
-    def market(self) -> str:
+    def market(self) -> str: # concrete method
         return f"{self.symbol} trades on {self.exchange}"
 
 
