@@ -9,7 +9,8 @@ from src.domain import (
                         FixedFeeCalculator,
                         TradeFeeCalculator,
                         ZeroFeeCalculator,
-                        TradeSide
+                        TradeSide,
+                        calculate_positon,
                         )
 
 
@@ -136,4 +137,31 @@ def test_buy_trade_has_positive_signed_quantity():
     trade = Trade(symbol="AAPL", quantity=10, price=100, side=TradeSide.BUY)
 
     assert trade.signed_quantity() == 10
-    
+
+# because its a buy and has a quantity of 10 the signed quantity 
+# which tells us the trades positon (+ or -) gives us a positive number 10
+
+def test_sell_trade_has_negative_signed_quantity():
+    trade = Trade(symbol="AAPL", quantity=4, price=120, side=TradeSide.SELL)
+
+    assert trade.signed_quantity() == -4
+
+
+def test_trade_side_string_is_normalised_to_enum():
+    trade = Trade(symbol="AAPL", quantity=5, price=100, side="sell") #"sell" needs t obe converted to a "SELL"
+
+    assert trade.side == TradeSide.SELL ## normalises through the dunder method isinstance()
+    assert trade.signed_quantity() == -5
+
+def test_invalid_trade_side_raises_value_error():
+    with pytest.raises(ValueError):
+        Trade(symbol="AAPL", quantity=5, price=100, side="banana")
+
+def test_calculate_positon_from_buy_and_sell_trades():
+    trades = [
+        Trade(symbol="AAPL", quantity=10, price=100, side=TradeSide.BUY),
+        Trade(symbol="AAPL", quantity=4, price=100, side=TradeSide.SELL),
+        Trade(symbol="AAPL", quantity=2, price=100, side=TradeSide.BUY),
+    ]
+
+    assert calculate_positon(trades) == 8

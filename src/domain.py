@@ -12,7 +12,7 @@ class Trade:
     symbol: str
     quantity: float
     price: float
-    side: TradeSide = TradeSide.BUY
+    side: TradeSide = TradeSide.BUY # defaults to buy if no argument provided
 
     # Encapsulation = Trade keeps symbol, quantity, price and validation together
 
@@ -40,7 +40,7 @@ class Trade:
     def notional_value(self) -> float: # concrete method
         return self.quantity * self.price
     
-    def signed_quantity(self) -> float:
+    def signed_quantity(self) -> float: # helps calculate the net position from multiple trades from the quantity...
         if self.side == TradeSide.BUY:
             return self.quantity
         return -self.quantity
@@ -124,5 +124,12 @@ class EquityTrade(Trade): # Inheritance because equitytrade is a specialised tra
 
     def market(self) -> str: # concrete method
         return f"{self.symbol} trades on {self.exchange}"
+    
 
+def calculate_positon(trades: list[Trade]) -> float:
+    total = 0
 
+    for trade in trades:
+        total += trade.signed_quantity() # cehcks whether the trade increases or decreases in position.
+
+    return total
