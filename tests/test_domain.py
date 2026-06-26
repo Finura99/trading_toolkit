@@ -11,6 +11,7 @@ from src.domain import (
                         ZeroFeeCalculator,
                         TradeSide,
                         calculate_positon,
+                        calculate_exposure,
                         )
 
 
@@ -165,3 +166,9 @@ def test_calculate_positon_from_buy_and_sell_trades():
     ]
 
     assert calculate_positon(trades) == 8
+
+def test_calculate_exposure_from_positon_and_market_price():
+    position = 8
+    market_price = 100
+
+    assert calculate_exposure(position, market_price) == 800

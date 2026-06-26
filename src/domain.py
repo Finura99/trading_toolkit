@@ -133,3 +133,6 @@ def calculate_positon(trades: list[Trade]) -> float:
         total += trade.signed_quantity() # cehcks whether the trade increases or decreases in position.
 
     return total
+
+def calculate_exposure(position: float, market_price: float) -> float:
+    return position * market_price
