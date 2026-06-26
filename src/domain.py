@@ -125,6 +125,7 @@ class EquityTrade(Trade): # Inheritance because equitytrade is a specialised tra
     def market(self) -> str: # concrete method
         return f"{self.symbol} trades on {self.exchange}"
     
+    
 
 def calculate_positon(trades: list[Trade]) -> float:
     total = 0
