@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.INFO)
 #------------------------------------------------------------------------
 
 
-def create_trade(conn, trade: EquityTrade): # parameters 
+def create_trade(conn, trade: EquityTrade): # parameters
     cursor = conn.cursor()
     # cursor is the sql tool used within the connection
 
@@ -31,14 +31,15 @@ def create_trade(conn, trade: EquityTrade): # parameters
         
         logging.info(f"Creating trade for symbol={trade.symbol}")
         
-        cursor.execute( 
+        cursor.execute(
             """
-            INSERT INTO trades (symbol, quantity, price)
-            VALUES (%s, %s, %s)
-            RETURNING symbol, quantity, price;
+            INSERT INTO trades (symbol, side, quantity, price)
+            VALUES (%s, %s, %s, %s)
+            RETURNING symbol, side, quantity, price;
             """,
-            (trade.symbol, trade.quantity, trade.price)
-        ) # db call ?
+            (trade.symbol, trade.side.value, trade.quantity, trade.price)
+        ) 
+        # db call ?
 
         row = cursor.fetchone() # returns as a tuple
 
@@ -47,6 +48,8 @@ def create_trade(conn, trade: EquityTrade): # parameters
         logging.info("After Commit")
 
         symbol, quantity, price = row
+
+        
 
         return {
             "symbol" : symbol,
@@ -96,21 +99,32 @@ def get_portfolio(conn): # aggregates the trade data into an overview for the cl
 
 
 
+############################################################################################################
 # generator
+
+
 def generate_trade_responses(rows): # helper generator function
     for row in rows:
-        symbol, quantity, price = row
+        symbol, side, quantity, price = row
 
-        trade = Trade(symbol=symbol, quantity=quantity, price=price)
+        trade = Trade(symbol=symbol, quantity=quantity, price=price, side=side)
 
         yield {
             "symbol": trade.symbol,
             "quantity": trade.quantity,
             "price": trade.price,
             "trade_value": trade.notional_value(),
-            "side": trade.side.value
-        } # pauses every call and resumes where it left off...
+            "side": trade.side.value,
+        } 
+
+# pauses every call and resumes where it left off...
 # single source of truth for turning DB rows into API response dictionairies.
+
+
+############################################################################################################
+
+
+
 
 
 
@@ -134,9 +148,11 @@ def get_trades_by_symbol(conn, symbol: str):
     for row in rows:
 
         trade = Trade(symbol=row[0],
-                      quantity=row[1], 
-                      price=row[2],
-                      ) # used a class to rep a trade object for extendability instead of raw dict.
+                      side=row[1], 
+                      quantity=row[2],
+                      price=row[3],
+                      ) 
+        # used a class to rep a trade object for extendability instead of raw dict.
 
         result.append({
             "symbol" : trade.symbol,
@@ -157,7 +173,7 @@ def get_trades(conn, limit: int):
 
     try:
         cursor.execute("""
-            SELECT symbol, quantity, price
+            SELECT symbol, side, quantity, price
             FROM trades
             LIMIT %s
         """, (limit,)

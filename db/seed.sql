@@ -1,6 +1,7 @@
-INSERT INTO trades (symbol, quantity, price)
+INSERT INTO trades (symbol, side, quantity, price)
 VALUES
-('AAPL', 10, 150),
-('TSLA', 5, 200),
-('MSFT', 8, 300)
+('AAPL','BUY', 10, 150),
+('AAPL', 'BUY', 4, 155),
+('TSLA','BUY', 5, 200),
+('MSFT','SELL', 8, 300)
 ON CONFLICT (symbol) DO NOTHING;
