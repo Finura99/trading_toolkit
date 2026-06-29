@@ -20,3 +20,7 @@ class PortfolioResponse(BaseModel):
     total_quantity: float
     average_price: float
     total_value: float
+
+class PositionResponse(BaseModel):
+    symbol: str
+    net_quantity: float

@@ -231,7 +231,36 @@ def get_portfolio_by_symbol(conn, symbol: str):
         cursor.close() # cursor clean up no matter what...
 
 
+def get_positons(conn):
+    cursor = conn.cursor()
 
+    try:
+        cursor.execute("""
+            SELECT
+                       symbol,
+                       SUM(
+                        CASE
+                            WHEN side = 'BUY' THEN quantity
+                            WHEN side = 'SELL' THEN -quantity
+                       END
+                       ) AS net_quantity
+                       FROM trades
+                       GROUP BY symbol;
+                       """)
+        
+        rows = cursor.fetchall()
 
+        result = []
+
+        for row in rows:
+            result.append({
+                "symbol": row[0],
+                "net_quantity": row[1],
+            })
+
+            return result
+        
+    finally:
+        cursor.close()
 
         
