@@ -53,6 +53,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
             "quantity": quantity,
             "price" : price,
             "trade_value" : trade.notional_value(),
+            "side": trade.side.value,
         }
     
     except Exception as e:
@@ -107,6 +108,7 @@ def generate_trade_responses(rows): # helper generator function
             "quantity": trade.quantity,
             "price": trade.price,
             "trade_value": trade.notional_value(),
+            "side": trade.side.value
         } # pauses every call and resumes where it left off...
 # single source of truth for turning DB rows into API response dictionairies.
 
@@ -140,7 +142,8 @@ def get_trades_by_symbol(conn, symbol: str):
             "symbol" : trade.symbol,
             "quantity" : trade.quantity,
             "price" : trade.price,
-            "trade_value": trade.notional_value()
+            "trade_value": trade.notional_value(),
+            "side": trade.side.value,
         })
 
     return result
@@ -176,6 +179,7 @@ def portfolio_row_to_dict(row): # Helper function
         "total_quantity": row[1],
         "average_price": row[2],
         "total_value": row[3],
+        
     }
 
 

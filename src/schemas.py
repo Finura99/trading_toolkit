@@ -6,14 +6,14 @@ class TradeCreate(BaseModel):
     symbol: str
     quantity: float = Field(gt=0)
     price: float = Field(gt=0)
-    side: TradeSide.BUY
+    side: TradeSide = TradeSide.BUY
 
 class TradeResponse(BaseModel):
     symbol: str
     quantity: float 
     price: float 
     trade_value: float
-    side: TradeSidee
+    side: TradeSide
 
 class PortfolioResponse(BaseModel):
     symbol: str
