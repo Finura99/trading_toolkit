@@ -6,3 +6,10 @@ CREATE TABLE IF NOT EXISTS trades (
     quantity NUMERIC NOT NULL,
     price NUMERIC NOT NULL
 );
+
+DROP TABLE IF EXISTS market_prices;
+
+CREATE TABLE market_prices (
+    symbol TEXT PRIMARY KEY,
+    price NUMERIC NOT NULL
+);

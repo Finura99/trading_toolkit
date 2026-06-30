@@ -237,24 +237,26 @@ def get_positions(conn):
 
     try:
         cursor.execute("""
-            SELECT
-                symbol,
-                SUM(
-                    CASE
-                        WHEN side = 'BUY' THEN quantity
-                        WHEN side = 'SELL' THEN -quantity
-                    END
-                ) AS net_quantity,
-                MAX(price) AS market_price,
-                SUM(
-                    CASE
-                        WHEN side = 'BUY' THEN quantity
-                        WHEN side = 'SELL' THEN -quantity
-                    END
-                ) * MAX(price) AS exposure
-            FROM trades
-            GROUP BY symbol;
-        """)
+                            SELECT
+                                t.symbol,
+                                SUM(
+                                    CASE
+                                        WHEN t.side = 'BUY' THEN t.quantity
+                                        WHEN t.side = 'SELL' THEN -t.quantity
+                                    END
+                                ) AS net_quantity,
+                                mp.price AS market_price,
+                                SUM(
+                                    CASE
+                                        WHEN t.side = 'BUY' THEN t.quantity
+                                        WHEN t.side = 'SELL' THEN -t.quantity
+                                    END
+                                ) * mp.price AS exposure
+                            FROM trades t
+                            JOIN market_prices mp
+                                ON t.symbol = mp.symbol
+                            GROUP BY t.symbol, mp.price;
+                        """)
     # Aggregate trade events into current positions.
     # BUY trades increase net quantity; SELL trades decrease it.
     # Exposure is calculated from net quantity and market price.
