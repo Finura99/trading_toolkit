@@ -67,3 +67,22 @@ Data flows from the API through validation and restructured into doamin objects 
 - Added unit and API tests
 - Managed dependencies using pip and requirements.txt
 
+## Finance Domain Model
+
+This project models a simplified trading workflow:
+
+- Trades are individual BUY or SELL events.
+- Positions are derived from trades by aggregating quantities per symbol.
+- BUY trades increase the net position.
+- SELL trades decrease the net position.
+- Exposure is calculated as:
+
+```text
+net_quantity * market_price
+
+EX: BUY 10 AAPL
+    SELL 4 AAPL
+
+    Net position = 6 AAPL
+    Market price = 150
+    Exposure = 900
