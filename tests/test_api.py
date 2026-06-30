@@ -19,3 +19,19 @@ def test_get_portfolio_missing_symbol_returns_422():
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Portfolio position not found" # more tests can be added for other endpoints and scenarios as needed
+
+def test_get_positions():
+    response = client.get("/positons")
+
+    assert response.status_code == 200 # 200 HTTP means /positons endpoint exists
+
+    data = response.json() # it returns a json which has a list
+
+    assert isinstance(data, list) # checks if it is a list
+    assert len(data) > 0
+
+    first_position = data[0]
+
+    assert "symbol" in first_position
+    assert "net_quantity" in first_position # each position has symbol and net quantity
+    

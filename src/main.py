@@ -7,12 +7,13 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from src.db import connection_pool, check_db_connection, db_connection
 from src.db import get_connection
 from src.domain import EquityTrade
-from src.schemas import TradeCreate, TradeResponse, PortfolioResponse
+from src.schemas import TradeCreate, TradeResponse, PortfolioResponse, PositionResponse
 from src.services import (create_trade, 
                           get_portfolio,
                           get_trades_by_symbol,
                           get_trades,
-                          get_portfolio_by_symbol)
+                          get_portfolio_by_symbol,
+                          get_positions)
 
 app = FastAPI()
 
@@ -148,3 +149,14 @@ def get_portfolio_by_symbol_endpoint(symbol: str):
     #         raise HTTPException(status_code=404, detail="Portfolio position not found")
         
     #     return result
+
+
+@app.get("/positions", response_model=list[PositionResponse])
+def get_positions_endpoint():
+    conn = connection_pool.getconn()
+
+    try:
+        return get_positions(conn)
+    
+    finally:
+        connection_pool.putconn(conn)
