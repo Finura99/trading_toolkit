@@ -38,3 +38,12 @@ def test_get_positions():
     assert "exposure" in first_position
     # each position has symbol, net quantity, market_price and exposure...
 
+    symbols = {position["symbol"]: position for position in data}
+
+    assert "MSFT" in symbols
+
+    msft_position = symbols["MSFT"]
+
+    assert msft_position["net_quantity"] < 0
+    assert msft_position["exposure"] < 0
+
