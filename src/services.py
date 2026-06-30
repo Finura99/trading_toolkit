@@ -244,7 +244,14 @@ def get_positions(conn):
                         WHEN side = 'BUY' THEN quantity
                         WHEN side = 'SELL' THEN -quantity
                     END
-                ) AS net_quantity
+                ) AS net_quantity,
+                MAX(price) AS market_price,
+                SUM(
+                    CASE
+                        WHEN side = 'BUY' THEN quantity
+                        WHEN side = 'SELL' THEN -quantity
+                    END
+                ) * MAX(price) AS exposure
             FROM trades
             GROUP BY symbol;
         """)
@@ -257,6 +264,8 @@ def get_positions(conn):
             result.append({
                 "symbol": row[0],
                 "net_quantity": row[1],
+                "market_price": row[2],
+                "exposure": row[3],
             })
 
         return result

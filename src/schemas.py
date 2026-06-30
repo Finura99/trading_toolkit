@@ -24,3 +24,6 @@ class PortfolioResponse(BaseModel):
 class PositionResponse(BaseModel):
     symbol: str
     net_quantity: float
+    market_price: float
+    exposure: float
+    

@@ -21,17 +21,20 @@ def test_get_portfolio_missing_symbol_returns_422():
     assert response.json()["detail"] == "Portfolio position not found" # more tests can be added for other endpoints and scenarios as needed
 
 def test_get_positions():
-    response = client.get("/positons")
+    response = client.get("/positions")
 
-    assert response.status_code == 200 # 200 HTTP means /positons endpoint exists
+    assert response.status_code == 200 # 200 HTTP means /positions endpoint exists
 
-    data = response.json() # it returns a json which has a list
+    data = response.json() # convert the json response into python data
 
-    assert isinstance(data, list) # checks if it is a list
-    assert len(data) > 0
+    assert isinstance(data, list) # check the response is a list
+    assert len(data) > 0 # check if item has alteast 1 item
 
-    first_position = data[0]
+    first_position = data[0] # access the first element of the list item
 
     assert "symbol" in first_position
-    assert "net_quantity" in first_position # each position has symbol and net quantity
-    
+    assert "net_quantity" in first_position 
+    assert "market_price" in first_position
+    assert "exposure" in first_position
+    # each position has symbol, net quantity, market_price and exposure...
+
