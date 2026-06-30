@@ -255,6 +255,9 @@ def get_positions(conn):
             FROM trades
             GROUP BY symbol;
         """)
+    # Aggregate trade events into current positions.
+    # BUY trades increase net quantity; SELL trades decrease it.
+    # Exposure is calculated from net quantity and market price.
 
         rows = cursor.fetchall()
 
