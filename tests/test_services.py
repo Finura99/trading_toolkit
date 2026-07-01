@@ -1,4 +1,4 @@
-from src.services import get_positions
+from src.services import get_positions, position_row_to_dict
 
 
 class FakeCursor:
@@ -17,6 +17,19 @@ class FakeCursor:
 class FakeConnection:
     def cursor(self):
         return FakeCursor()
+    
+
+def test_positions_row_to_dict():
+    row = ('AAPL', 6, 150, 900) # sym, net_quantity, marketprice and exposure
+
+    result = position_row_to_dict(row)
+
+    assert result == {
+        "symbol": 'AAPL',
+        "net_quantity": 6,
+        "market_price": 150,
+        "exposure": 900,
+    }
     
 
 def test_get_positions_returns_aggregated_positions():

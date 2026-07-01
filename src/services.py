@@ -231,6 +231,18 @@ def get_portfolio_by_symbol(conn, symbol: str):
         cursor.close() # cursor clean up no matter what...
 
 
+###################################################################################################
+
+def position_row_to_dict(row): # cleaner service function ,another helper...
+    symbol, net_quantity, market_price, exposure = row
+
+    return {
+        "symbol": symbol,
+        "net_quantity": net_quantity,
+        "market_price": market_price,
+        "exposure": exposure,
+    }
+##################################################################################################
 
 def get_positions(conn):
     cursor = conn.cursor()
@@ -265,16 +277,9 @@ def get_positions(conn):
 
         result = []
 
-        for row in rows:
-            result.append({
-                "symbol": row[0],
-                "net_quantity": row[1],
-                "market_price": row[2],
-                "exposure": row[3],
-            })
+        
 
-        return result
+        return [position_row_to_dict(row) for row in rows] # list comprehension ?
 
     finally:
         cursor.close()
-
