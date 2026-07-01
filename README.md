@@ -57,9 +57,7 @@ The system is structured into three layers:
 - Service Layer: contains business logic and database interaction
 - Database Layer: stores market data
 
-Data flows from the API through validation and restructured into doamin objects for better design and reusability, then into the sercie layer for processing and persistence into the DB.
-
-## What I Learned
+Data flows from the API through Pydantic validation, into the domain objects for reusable business logic, then into the service layer for db persistence and retrieval.
 
 - Building a backend API using FastAPI
 - Used Pydantic for validation
