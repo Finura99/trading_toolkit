@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException, Query, Request
 
 
 from src.db import connection_pool, check_db_connection, db_connection
-from src.db import get_connection
+# from src.db import get_connection
 from src.domain import EquityTrade
 from src.schemas import TradeCreate, TradeResponse, PortfolioResponse, PositionResponse
 from src.services import (create_trade, 
@@ -99,17 +99,13 @@ def get_trade_endpoint():
 @app.get("/trades/{symbol}", response_model=list[TradeResponse])
 def get_trade_symbol(symbol : str): # (api/schema/API validation)
 
-    conn = get_connection() # get connection withouth using the ocntext manager...for now
+    with db_connection() as conn:
+        result = get_trades_by_symbol(conn, symbol)
 
-    try:
-        result = get_trades_by_symbol(conn, symbol) # service layer/business logic and its I/O bound
-    
         if not result:
-            raise HTTPException(status_code=404, detail="Trades not found") # no resource exists
-
-        return result # return dict
-    finally:
-        connection_pool.putconn(conn) # back into the reusable pool
+            raise HTTPException(status_code=404, detail="Trades not found")
+        
+        return result
 
 
 
@@ -128,39 +124,25 @@ def get_trades_endpoint(limit: int = Query(default=5, gt=0, le=100)):
 @app.get("/portfolio/{symbol}", response_model=PortfolioResponse)
 def get_portfolio_by_symbol_endpoint(symbol: str):
 
-    conn = get_connection()
-
-    with db_connection() as conn:
+    with db_connection() as conn: 
+        # one type of connection pattern here which is context manager, used 
+        # a try and finally block before and manually opened and closed connections...
         result = get_portfolio_by_symbol(conn, symbol)
 
         if not result:
             raise HTTPException(status_code=404, detail="Portfolio position not found")
         
         return result
-
-    try:
-        result = get_portfolio_by_symbol(conn, symbol)
-
-        if not result:
-            raise HTTPException(status_code=404, detail = "Portfolio position not found")
-        
-        return result
     
-    finally:
-        connection_pool.putconn(conn)
-
-
-    # with db_connection() as conn:
-    #     result = get_portfolio_by_symbol(conn,symbol)
-
-    #     if not result:
-    #         raise HTTPException(status_code=404, detail="Portfolio position not found")
-        
-    #     return result
-
 
 @app.get("/positions", response_model=list[PositionResponse])
 def get_positions_endpoint():
 
     with db_connection() as conn: # context manager usage for connection poooling
-        return get_positions(conn)
+
+        result = get_positions(conn)
+
+        if not result:
+            raise HTTPException(status_code=404, detail="Positions didn't find anything")
+        
+        return result

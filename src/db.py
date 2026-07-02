@@ -1,20 +1,18 @@
-from psycopg2 import pool
-import os
-
-from dotenv import load_dotenv
-from src.utils import config
 from contextlib import contextmanager
+from psycopg2 import pool
+from dotenv import load_dotenv
+import os
 
 load_dotenv() # reads the .env file and loads all variables
 
 @contextmanager
-def db_connection():
+def db_connection(): # owns the connection lifecycle
     conn = connection_pool.getconn()
 
     try:
         yield conn # generator ?
     finally:
-        connection_pool.putconn(conn)
+        connection_pool.putconn(conn) # automatic clean up in api layer...
 
 
 connection_pool = pool.SimpleConnectionPool(
@@ -27,18 +25,17 @@ connection_pool = pool.SimpleConnectionPool(
     password=os.getenv("DB_PASSWORD"),
 )
 
-def get_connection():
-    return connection_pool.getconn()
+# def get_connection(): # deprecated at date: 02.07.26
+#     return connection_pool.getconn()
 
 def check_db_connection() -> bool:
     conn = None
 
     try:
-        conn = connection_pool.getconn()
-
-        with conn.cursor() as cursor: #.cursor is the tool for sql to amend the data
-            cursor.execute("SELECT 1;")
-            cursor.fetchone()
+        with db_connection() as conn:
+            with conn.cursor() as cursor: #.cursor is the tool for sql to amend the data
+                cursor.execute("SELECT 1;")
+                cursor.fetchone()
 
         return True
     
