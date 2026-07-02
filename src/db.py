@@ -12,7 +12,7 @@ def db_connection():
     conn = connection_pool.getconn()
 
     try:
-        yield conn
+        yield conn # generator ?
     finally:
         connection_pool.putconn(conn)
 

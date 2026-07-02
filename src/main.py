@@ -130,6 +130,14 @@ def get_portfolio_by_symbol_endpoint(symbol: str):
 
     conn = get_connection()
 
+    with db_connection() as conn:
+        result = get_portfolio_by_symbol(conn, symbol)
+
+        if not result:
+            raise HTTPException(status_code=404, detail="Portfolio position not found")
+        
+        return result
+
     try:
         result = get_portfolio_by_symbol(conn, symbol)
 
@@ -153,10 +161,6 @@ def get_portfolio_by_symbol_endpoint(symbol: str):
 
 @app.get("/positions", response_model=list[PositionResponse])
 def get_positions_endpoint():
-    conn = connection_pool.getconn()
 
-    try:
+    with db_connection() as conn: # context manager usage for connection poooling
         return get_positions(conn)
-    
-    finally:
-        connection_pool.putconn(conn)
