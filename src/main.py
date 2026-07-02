@@ -74,25 +74,21 @@ def create_trade_endpoint(trade: TradeCreate):
         exchange="NASDAQ",
     )
 
-    conn = get_connection() # uses psycopg2
+    with db_connection() as conn:
+        result = create_trade(conn, trade_obj)
 
-    try:
-        return create_trade(conn, trade_obj) # service layer
-    finally:
-        connection_pool.putconn(conn) # use connection pooling instead of opening and closing db conn reducing conn overhead
+        return result
+
 
 
 @app.get("/portfolio", response_model=list[PortfolioResponse])
 def get_trade_endpoint():
 
-    conn = get_connection()
-
-    try:
+    with db_connection() as conn:
         result = get_portfolio(conn)
+
         return result
-    
-    finally:
-        connection_pool.putconn(conn) # returning it back in the pool instead of destroying it
+
 
 
 
