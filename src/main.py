@@ -49,6 +49,8 @@ def health_check():
         "status": "ok" # is the fastapi process alive?
     }
 
+## lazygit test
+
 @app.get("/readiness") # can the app serve database backed requests/queries?
 def readiness_check():
 
