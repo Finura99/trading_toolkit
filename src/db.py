@@ -25,8 +25,6 @@ connection_pool = pool.SimpleConnectionPool(
     password=os.getenv("DB_PASSWORD"),
 )
 
-# def get_connection(): # deprecated at date: 02.07.26
-#     return connection_pool.getconn()
 
 def check_db_connection() -> bool:
     conn = None
