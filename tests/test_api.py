@@ -47,3 +47,17 @@ def test_get_positions():
     assert msft_position["net_quantity"] < 0
     assert msft_position["exposure"] < 0
 
+def test_create_trade_unsupported_symbol_returns_400():
+    response = client.post(
+        "/trades",
+        json={
+            "symbol": "INVALID",
+            "side": "BUY",
+            "quantity" : 10,
+            "price": 150,
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()['detail'] == "Unsupported symbol: INVALID"
+

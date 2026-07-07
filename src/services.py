@@ -19,7 +19,12 @@ logging.basicConfig(level=logging.INFO)
 
 
 
-SUPPORTED_SYMBOLS = {"AAPL", "MSFT", "TSLA", "GOOG"}
+SUPPORTED_SYMBOLS = {
+    "AAPL", 
+    "MSFT", 
+    "TSLA", 
+    "GOOG",
+    }
 
 #------------------------------------------------------------------------
 
