@@ -18,6 +18,9 @@ def validate_input(symbol: str):
 logging.basicConfig(level=logging.INFO)
 
 
+
+SUPPORTED_SYMBOLS = {"AAPL", "MSFT", "TSLA", "GOOG"}
+
 #------------------------------------------------------------------------
 
 
@@ -25,9 +28,14 @@ def create_trade(conn, trade: EquityTrade): # parameters
     cursor = conn.cursor()
     # cursor is the sql tool used within the connection
 
-    try: 
+    try:
         if trade.quantity <= 0:
             raise HTTPException(status_code=400, detail="Quantity must be positive")
+        
+        if trade.symbol.upper() not in SUPPORTED_SYMBOLS:
+            raise HTTPException(status_code=400, 
+                                detail=f"Unsupported symbol: {trade.symbol}"
+                                )
         
         logging.info(f"Creating trade for symbol={trade.symbol}")
         
@@ -47,22 +55,21 @@ def create_trade(conn, trade: EquityTrade): # parameters
         conn.commit() # save changes - DB transaction handling - only used when writing/updating data 
         logging.info("After Commit")
 
-        symbol, quantity, price = row
+        symbol, side, quantity, price = row
 
-        
 
         return {
             "symbol" : symbol,
+            "side": side,
             "quantity": quantity,
             "price" : price,
             "trade_value" : trade.notional_value(),
-            "side": trade.side.value,
         }
     
     except Exception as e:
         logging.error(f"Database transaction failed: {e}")
         conn.rollback()
-        raise 
+        raise
         
     finally:
         cursor.close()

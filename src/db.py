@@ -12,7 +12,7 @@ def db_connection(): # owns the connection lifecycle
     try:
         yield conn # generator ?
     finally:
-        connection_pool.putconn(conn) # automatic clean up in api layer...
+        connection_pool.putconn(conn) # automatic clean up with the context manager...
 
 
 connection_pool = pool.SimpleConnectionPool(

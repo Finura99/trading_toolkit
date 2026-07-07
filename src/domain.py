@@ -43,6 +43,7 @@ class Trade:
     def signed_quantity(self) -> float: # helps calculate the net position from multiple trades from the quantity...
         if self.side == TradeSide.BUY:
             return self.quantity
+        
         return -self.quantity
 
 
@@ -119,13 +120,16 @@ class TradeProcessor:
 
 
 @dataclass
-class EquityTrade(Trade): # Inheritance because equitytrade is a specialised trade of the base class.
+class EquityTrade(Trade): # Inheritance because equitytrade is a specialised trade of the super class.
     exchange: str = "NASDAQ"
 
     def market(self) -> str: # concrete method
         return f"{self.symbol} trades on {self.exchange}"
     
-    
+
+
+
+
 
 def calculate_positon(trades: list[Trade]) -> float:
     total = 0
