@@ -2,8 +2,9 @@ import time
 import logging
 from fastapi import HTTPException
 
-from src.utils import reverse_string, log_execution
+from src.utils import log_execution
 from src.domain import Trade, EquityTrade
+from src.constants import SUPPORTED_SYMBOLS
 
 # add input validation
 
