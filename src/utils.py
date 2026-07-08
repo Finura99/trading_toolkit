@@ -29,4 +29,8 @@ def log_execution(func): #decorator
         return result
     
     return wrapper
+## corss-cutting concern as this logic is used across modules...
 
+
+
+logging.basicConfig(level=logging.INFO)

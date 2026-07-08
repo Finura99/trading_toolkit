@@ -9,23 +9,12 @@ from src.constants import SUPPORTED_SYMBOLS
 # add input validation
 
 def validate_input(symbol: str):
-
-    symbol = symbol.strip().upper()
-
-    return symbol
+    return symbol.strip().upper()
 
 
 
 logging.basicConfig(level=logging.INFO)
 
-
-
-SUPPORTED_SYMBOLS = {
-    "AAPL", 
-    "MSFT", 
-    "TSLA", 
-    "GOOG",
-    }
 
 #------------------------------------------------------------------------
 
@@ -146,7 +135,7 @@ def get_trades_by_symbol(conn, symbol: str):
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT symbol, quantity, price
+        SELECT symbol, side, quantity, price
         FROM trades
         WHERE symbol = %s;
     """, 
