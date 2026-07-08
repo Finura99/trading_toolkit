@@ -6,12 +6,6 @@ from src.utils import log_execution
 from src.domain import Trade, EquityTrade
 from src.constants import SUPPORTED_SYMBOLS
 
-# add input validation
-
-def validate_input(symbol: str):
-    return symbol.strip().upper()
-
-
 
 logging.basicConfig(level=logging.INFO)
 
@@ -190,6 +184,7 @@ def get_trades(conn, limit: int):
     finally:
         cursor.close()
 
+############################################################################################################
 
 def portfolio_row_to_dict(row): # Helper function
     return {
@@ -199,6 +194,8 @@ def portfolio_row_to_dict(row): # Helper function
         "total_value": row[3],
         
     }
+
+############################################################################################################
 
 
 def get_portfolio_by_symbol(conn, symbol: str):
