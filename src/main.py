@@ -86,9 +86,12 @@ def create_trade_endpoint(trade: TradeCreate):
 @app.get("/portfolio", response_model=list[PortfolioResponse])
 def get_trade_endpoint():
 
-    with db_connection() as conn:
+    with db_connection() as conn: 
         result = get_portfolio(conn)
 
+    # database context manager used here for easy read
+
+    
         return result
 
 

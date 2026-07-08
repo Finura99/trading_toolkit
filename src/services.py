@@ -35,7 +35,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
             RETURNING symbol, side, quantity, price;
             """,
             (trade.symbol, trade.side.value, trade.quantity, trade.price)
-        ) 
+        )
         # db call ?
 
         row = cursor.fetchone() # returns as a tuple
@@ -69,7 +69,7 @@ def get_portfolio(conn): # aggregates the trade data into an overview for the cl
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT 
+        SELECT
             symbol,
             SUM(quantity) AS total_quantity,
             SUM(quantity * price) / SUM(quantity) AS average_price,
@@ -88,7 +88,7 @@ def get_portfolio(conn): # aggregates the trade data into an overview for the cl
             "symbol" : row[0],
             "total_quantity" : row[1],
             "average_price": row[2],
-            "total_value": row[3]
+            "total_value": row[3],
         })
 
     return result
