@@ -185,3 +185,5 @@ python -m uvicorn src.main:app --reload
 - Add more integration tests using a real PostgreSQL container
 - Add a simple frontend or dashboard for portfolio and position views
 - Build a separate Java/Spring Boot trade execution simulator that can submit simulated filled trades  into this trading toolkit
+
+## Final polishing
