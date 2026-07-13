@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from src.utils import log_execution
 from src.domain import Trade, EquityTrade
 from src.constants import SUPPORTED_SYMBOLS
+from src.repository import insert_trade_repo
 
 
 logging.basicConfig(level=logging.INFO)
@@ -14,54 +15,26 @@ logging.basicConfig(level=logging.INFO)
 
 
 def create_trade(conn, trade: EquityTrade): # parameters
-    cursor = conn.cursor()
-    # cursor is the sql tool used within the connection
-
-    try:
-        if trade.quantity <= 0:
-            raise HTTPException(status_code=400, detail="Quantity must be positive")
-        
-        if trade.symbol.upper() not in SUPPORTED_SYMBOLS:
-            raise HTTPException(status_code=400, 
-                                detail=f"Unsupported symbol: {trade.symbol}"
-                                )
-        
-        logging.info(f"Creating trade for symbol={trade.symbol}")
-        
-        cursor.execute(
-            """
-            INSERT INTO trades (symbol, side, quantity, price)
-            VALUES (%s, %s, %s, %s)
-            RETURNING symbol, side, quantity, price;
-            """,
-            (trade.symbol, trade.side.value, trade.quantity, trade.price)
-        )
-        # db call ?
-
-        row = cursor.fetchone() # returns as a tuple
-
-        logging.info("Before Commit")
-        conn.commit() # save changes - DB transaction handling - only used when writing/updating data 
-        logging.info("After Commit")
-
-        symbol, side, quantity, price = row
-
-
-        return {
-            "symbol" : symbol,
-            "side": side,
-            "quantity": quantity,
-            "price" : price,
-            "trade_value" : trade.notional_value(),
-        }
     
-    except Exception as e:
-        logging.error(f"Database transaction failed: {e}")
-        conn.rollback()
-        raise
+    if trade.quantity <= 0:
+        raise HTTPException(status_code=400, 
+                            detail="Quantity must be positive") 
         
-    finally:
-        cursor.close()
+    if trade.symbol.upper() not in SUPPORTED_SYMBOLS:
+        raise HTTPException(status_code=400, 
+                            detail=f"Unsupported symbol: {trade.symbol}") # business validations
+    
+
+    persisted_trade = insert_trade_repo(conn, trade) # persistence
+
+    return {
+        **persisted_trade,
+        "trade_value" : trade.notional_value(),
+    } # never did this, using asterisks on a variable or dict in a current 
+      # dict is called dictionary unpacking
+
+
+    # add business derived data here...
 
 
 def get_portfolio(conn): # aggregates the trade data into an overview for the client to get detailed info of their portfolio.

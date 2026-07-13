@@ -1,5 +1,4 @@
 
-
 SUPPORTED_SYMBOLS = {
     "AAPL", 
     "MSFT", 
