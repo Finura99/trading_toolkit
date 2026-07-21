@@ -17,24 +17,22 @@ logging.basicConfig(level=logging.INFO)
 def create_trade(conn, trade: EquityTrade): # parameters
     
     if trade.quantity <= 0:
-        raise HTTPException(status_code=400, 
-                            detail="Quantity must be positive") 
+        raise HTTPException(status_code=400,
+                            detail="Quantity must be positive")
         
     if trade.symbol.upper() not in SUPPORTED_SYMBOLS:
-        raise HTTPException(status_code=400, 
+        raise HTTPException(status_code=400,
                             detail=f"Unsupported symbol: {trade.symbol}") # business validations
     
 
     persisted_trade = insert_trade_repo(conn, trade) # persistence
 
+
+    # add business derived data here...
     return {
         **persisted_trade,
         "trade_value" : trade.notional_value(),
-    } # never did this, using asterisks on a variable or dict in a current 
-      # dict is called dictionary unpacking
-
-
-    # add business derived data here...
+    } # never did this, using double asterisks here is dict unpacking
 
 
 def get_portfolio(conn): # aggregates the trade data into an overview for the client to get detailed info of their portfolio.
