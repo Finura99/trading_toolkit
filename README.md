@@ -187,3 +187,5 @@ python -m uvicorn src.main:app --reload
 - Build a separate Java/Spring Boot trade execution simulator that can submit simulated filled trades  into this trading toolkit
 
 ## Final polishing
+
+date: 23/07/26 - consolidation phase, close to starting order execution integration
