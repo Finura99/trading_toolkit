@@ -79,7 +79,7 @@ def create_trade_endpoint(trade: TradeCreate):
     with db_connection() as conn:
         result = create_trade(conn, trade_obj)
 
-        return result
+        return result #context manager
 
 
 
