@@ -41,5 +41,4 @@ def check_db_connection() -> bool:
         return False
     
     finally:
-        if conn:
-            connection_pool.putconn(conn) # puts the connection back to the pool
+            connection_pool.putconn(conn) 

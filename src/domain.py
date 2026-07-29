@@ -63,7 +63,7 @@ class TradeValidator:
 
 class FeeCalculator(ABC):
     @abstractmethod
-    def calculate_fee(self, trade: Trade): 
+    def calculate_fee(self, trade: Trade):
         pass
 
     # FeeCalculator defines expected behaviour without exposing implementation details

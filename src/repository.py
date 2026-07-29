@@ -44,3 +44,5 @@ def insert_trade_repo(conn, trade: EquityTrade):
         
     finally:
         cursor.close()
+
+
