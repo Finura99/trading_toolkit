@@ -25,13 +25,13 @@ def create_trade(conn, trade: EquityTrade): # parameters
                             detail=f"Unsupported symbol: {trade.symbol}") # business validations
     
 
-    persisted_trade = insert_trade_repo(conn, trade) # persistence
+    persisted_trade = insert_trade_repo(conn, trade) # persistence / goes onto the repository layer
 
 
     # add business derived data here...
     return {
         **persisted_trade,
-        "trade_value" : trade.notional_value(),
+        "trade_value" : trade.notional_value()
     } # never did this, using double asterisks here is dict unpacking
 
 

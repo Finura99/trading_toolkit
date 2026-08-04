@@ -23,7 +23,7 @@ def insert_trade_repo(conn, trade: EquityTrade):
             # db call ?
 
         row = cursor.fetchone() # returns as a tuple
-
+        
         logging.info("Before Commit")
         conn.commit() # save changes - DB transaction handling - only used when writing/updating data 
         logging.info("After Commit")
