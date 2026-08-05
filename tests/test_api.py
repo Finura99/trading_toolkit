@@ -61,3 +61,5 @@ def test_create_trade_unsupported_symbol_returns_400():
     assert response.status_code == 400
     assert response.json()['detail'] == "Unsupported symbol: INVALID"
 
+    ## an assertion is a statement in a test that verifies the actual result matches the expected result.
+

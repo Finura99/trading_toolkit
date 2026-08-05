@@ -29,6 +29,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
 
 
     # add business derived data here...
+    
     return {
         **persisted_trade,
         "trade_value" : trade.notional_value()
