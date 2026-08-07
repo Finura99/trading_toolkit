@@ -124,7 +124,7 @@ class EquityTrade(Trade): # Inheritance because equitytrade is a specialised tra
     exchange: str = "NASDAQ"
 
     def market(self) -> str: # concrete method
-        return f"{self.symbol} trades on {self.exchange}"
+        return f"{self.symbol} trades on {self.exchange}" # extended on the inherited attributes
     
 
 
