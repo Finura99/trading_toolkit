@@ -26,4 +26,4 @@ Commands used:
 
 Interview explanation:
 
-While testing my trade creation endpoint, I discovered valid duplicate AAPL trades were failing with a 500. I traced the issue from the API logs into Postgres, inspected the table schema, and found a unique constraint on `symbol`. That did not match the trading domain because multiple trades can exist for the same instrument. I fixed the schema so `id` remains unique but `symbol` does not, then verified the fix with curl, SQL queries and tests.
+While testing my trade creation endpoint, I discovered valid duplicate AAPL trades were failing with a 500. I traced the issue from the API logs into Postgres, inspected the table schema, and found a unique constraint on `symbol`. It did not match the trading domain because multiple trades can exist for the same instrument. I fixed the schema so `id` remains unique but `symbol` does not then verified the fix with curl, SQL queries and tests.
