@@ -70,6 +70,7 @@ class FeeCalculator(ABC):
     # this tells us that any object/class using method calculate fee must adhere to its signature parameters and method name.
     # abstraction applied here
     # essentially like an api contract
+    # it defines the contract that every fee calculator implementation must satisfy.
 
 
 
@@ -77,6 +78,7 @@ class TradeFeeCalculator(FeeCalculator):
     def calculate_fee(self, trade: Trade) -> float:
         return trade.notional_value() * 0.001
     ## isnt this compositon since its bringing in our base class as an obj?
+    ## 10/08/26 realised this is a mixture of comp and abstraction
 
 
 class PercentageFeeCalculator(FeeCalculator):
@@ -107,7 +109,7 @@ class TradeProcessor:
         self.validator.validate(trade) # validates the trade
 
         fee = self.fee_calculator.calculate_fee(trade) # delegates fee calculation
-        ## using the objects method ergo composition and polymorphism in the method
+        ## using the objects method therefore composition and polymorphism in the method
 
         return {
             "symbol": trade.symbol,
@@ -135,7 +137,7 @@ def calculate_positon(trades: list[Trade]) -> float:
     total = 0
 
     for trade in trades:
-        total += trade.signed_quantity() # cehcks whether the trade increases or decreases in position.
+        total += trade.signed_quantity() # checks whether the trade increases or decreases in position.
 
     return total
 
