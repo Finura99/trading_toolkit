@@ -41,7 +41,7 @@ class Trade:
         return self.quantity * self.price
     
     def signed_quantity(self) -> float: # helps calculate the net position from multiple trades from the quantity...
-        if self.side == TradeSide.BUY:
+        if self.side == TradeSide.BUY: # changes
             return self.quantity
         
         return -self.quantity
