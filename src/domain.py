@@ -109,7 +109,7 @@ class TradeProcessor:
         self.validator.validate(trade) # validates the trade
 
         fee = self.fee_calculator.calculate_fee(trade) # delegates fee calculation
-        ## using the objects method therefore composition and polymorphism in the method
+        ## using the objects method therefore composition and polymorphism applied here
 
         return {
             "symbol": trade.symbol,
