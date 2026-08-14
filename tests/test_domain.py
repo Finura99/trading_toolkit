@@ -119,7 +119,7 @@ def test_trade_processor_uses_fixed_fee_processor():
 def test_zero_fee_calculator():
     trade = Trade(symbol="AAPL", quantity=10, price=150)
 
-    calculator = ZeroFeeCalculator() 
+    calculator = ZeroFeeCalculator()
     # object stored in that variable
 
     assert calculator.calculate_fee(trade) == 0
@@ -153,6 +153,7 @@ def test_trade_side_string_is_normalised_to_enum():
 
     assert trade.side == TradeSide.SELL ## normalises through the dunder method isinstance()
     assert trade.signed_quantity() == -5
+
 
 def test_invalid_trade_side_raises_value_error():
     with pytest.raises(ValueError):

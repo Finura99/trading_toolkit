@@ -20,7 +20,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
         raise HTTPException(status_code=400,
                             detail="Quantity must be positive")
         
-    if trade.symbol.upper() not in SUPPORTED_SYMBOLS:
+    if trade.symbol.upper() not in SUPPORTED_SYMBOLS: # business vlaidation (checking supported symbols)
         raise HTTPException(status_code=400,
                             detail=f"Unsupported symbol: {trade.symbol}") # business validations
     

@@ -67,7 +67,7 @@ def readiness_check():
     })
 
 @app.post("/trades", response_model=TradeResponse)
-def create_trade_endpoint(trade: TradeCreate):
+def create_trade_endpoint(trade: TradeCreate): #api validation to check if the data has integrity
     
     trade_obj = EquityTrade( # inheritance applied here
         symbol=trade.symbol,
