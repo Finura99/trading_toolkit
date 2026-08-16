@@ -39,6 +39,7 @@ class EquityTrade(Trade): # inheritance...
 trade = Trade("AAPL", 10, 200) # object (instance of class)
 ##print(trade.symbol)
 ##print(trade.trade_value())
+## sunday git push
 
 
 
