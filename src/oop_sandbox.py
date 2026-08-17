@@ -11,12 +11,9 @@ class Trade:
         if value < 0:
             raise ValueError("Quantity is not positive")
         
-        self._quantity = value
+        self._quantity = value 
 
-
-
-
-class EquityTrade(Trade): # inheritance...
+class EquityTrade(Trade): # inheritance...bringing in attributes and methods
     
     # create a special method
     def __init__(self, symbol: str, quantity: float, price: float, exchange: str):
