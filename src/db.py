@@ -39,6 +39,3 @@ def check_db_connection() -> bool:
     
     except Exception:
         return False
-    
-    finally:
-            connection_pool.putconn(conn) # just checking
