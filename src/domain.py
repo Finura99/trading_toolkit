@@ -143,3 +143,4 @@ def calculate_positon(trades: list[Trade]) -> float:
 
 def calculate_exposure(position: float, market_price: float) -> float:
     return position * market_price
+

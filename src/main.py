@@ -15,7 +15,7 @@ from src.services import (create_trade,
                           get_portfolio_by_symbol,
                           get_positions)
 
-app = FastAPI()
+app = FastAPI() # instance of the app ?
 
 logging.basicConfig(level=logging.INFO)
 

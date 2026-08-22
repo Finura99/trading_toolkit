@@ -18,22 +18,26 @@ def create_trade(conn, trade: EquityTrade): # parameters
     
     if trade.quantity <= 0:
         raise HTTPException(status_code=400,
-                            detail="Quantity must be positive")
+                            detail="Quantity must be positive") 
+    # extra layer of api validation
         
-    if trade.symbol.upper() not in SUPPORTED_SYMBOLS: # business vlaidation (checking supported symbols)
+
+    if trade.symbol.upper() not in SUPPORTED_SYMBOLS:
         raise HTTPException(status_code=400,
-                            detail=f"Unsupported symbol: {trade.symbol}") # business validations
+                            detail=f"Unsupported symbol: {trade.symbol}")
+    # business validations
     
 
-    persisted_trade = insert_trade_repo(conn, trade) # persistence / goes onto the repository layer
+    persisted_trade = insert_trade_repo(conn, trade)
+    # persistence goes onto the repository layer / abstraction
 
+    # add business derived data below
 
-    # add business derived data here...
-    
     return {
-        **persisted_trade,
+        **persisted_trade, # using double asterisks here is dict unpacking
         "trade_value" : trade.notional_value()
-    } # never did this, using double asterisks here is dict unpacking
+    } 
+
 
 
 def get_portfolio(conn): # aggregates the trade data into an overview for the client to get detailed info of their portfolio.
