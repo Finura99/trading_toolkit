@@ -46,3 +46,32 @@ def insert_trade_repo(conn, trade: EquityTrade):
         cursor.close()
 
 
+def get_portfolio_repo(conn):
+    cursor = conn.cursor()
+
+    cursor.execute("""
+                    SELECT
+                        symbol,
+                        SUM(quantity) AS total_quantity,
+                        SUM(quantity * price) / SUM(quantity) AS average_price,
+                        SUM(quantity * price) AS total_value
+                    FROM trades
+                    GROUP BY symbol;
+    """)
+
+    rows = cursor.fetchall()
+    cursor.close()
+
+    result = []
+
+    for row in rows: # loop through to append them in the list "result"
+            result.append({
+                "symbol" : row[0],
+                "total_quantity" : row[1],
+                "average_price": row[2],
+                "total_value": row[3],
+            })
+            
+    return result
+
+

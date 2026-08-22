@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from src.utils import log_execution
 from src.domain import Trade, EquityTrade
 from src.constants import SUPPORTED_SYMBOLS
-from src.repository import insert_trade_repo
+from src.repository import insert_trade_repo, get_portfolio_repo
 
 
 logging.basicConfig(level=logging.INFO)
@@ -42,32 +42,11 @@ def create_trade(conn, trade: EquityTrade): # parameters
 
 def get_portfolio(conn): # aggregates the trade data into an overview for the client to get detailed info of their portfolio.
 
-    cursor = conn.cursor()
+    return get_portfolio_repo(conn) 
 
-    cursor.execute("""
-        SELECT
-            symbol,
-            SUM(quantity) AS total_quantity,
-            SUM(quantity * price) / SUM(quantity) AS average_price,
-            SUM(quantity * price) AS total_value
-        FROM trades
-        GROUP BY symbol;
-    """)
+# simple one line, as I delegated the persistence in the repository layer.
 
-    rows = cursor.fetchall() # returns a list of tuples
-    cursor.close()
-
-    result = []
-
-    for row in rows: # loop through to append them in the list "result"
-        result.append({
-            "symbol" : row[0],
-            "total_quantity" : row[1],
-            "average_price": row[2],
-            "total_value": row[3],
-        })
-
-    return result
+# doesnt care about SQL, tuples, cursors and fetchall()
 
 
 
