@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from src.utils import log_execution
 from src.domain import Trade, EquityTrade
 from src.constants import SUPPORTED_SYMBOLS
-from src.repository import insert_trade_repo, get_portfolio_repo
+from src.repository import insert_trade_repo, get_portfolio_repo, get_trades_by_symbol_repo
 
 
 logging.basicConfig(level=logging.INFO)
@@ -58,7 +58,10 @@ def generate_trade_responses(rows): # helper generator function
     for row in rows:
         symbol, side, quantity, price = row
 
-        trade = Trade(symbol=symbol, quantity=quantity, price=price, side=side)
+        trade = Trade(symbol=symbol,
+                      quantity=quantity,
+                      price=price,
+                      side=side)
 
         yield {
             "symbol": trade.symbol,
@@ -75,45 +78,9 @@ def generate_trade_responses(rows): # helper generator function
 ############################################################################################################
 
 
-
-
-
-
 def get_trades_by_symbol(conn, symbol: str):
 
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT symbol, side, quantity, price
-        FROM trades
-        WHERE symbol = %s;
-    """, 
-    (symbol,)
-    )
-
-    rows = cursor.fetchall() # list of tuples
-    cursor.close()
-
-    result = []
-
-    for row in rows:
-
-        trade = Trade(symbol=row[0],
-                      side=row[1], 
-                      quantity=row[2],
-                      price=row[3],
-                      ) 
-        # used a class to rep a trade object for extendability instead of raw dict.
-
-        result.append({
-            "symbol" : trade.symbol,
-            "quantity" : trade.quantity,
-            "price" : trade.price,
-            "trade_value": trade.notional_value(),
-            "side": trade.side.value,
-        })
-
-    return result
+    return get_trades_by_symbol_repo(conn, symbol)
 
 @log_execution # a decorator is a func that takes another func as an input and returns a new func wrapper that adds extra behaviour
 def get_trades(conn, limit: int):

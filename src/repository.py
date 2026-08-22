@@ -1,6 +1,6 @@
 import logging
 from time import time
-from src.domain import EquityTrade
+from src.domain import Trade, EquityTrade
 
 
 logging.basicConfig(level=logging.INFO)
@@ -75,3 +75,38 @@ def get_portfolio_repo(conn):
     return result
 
 
+def get_trades_by_symbol_repo(conn, symbol: str):
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT symbol, side, quantity, price
+        FROM trades
+        WHERE symbol = %s;
+    """,
+    (symbol,)
+    )
+
+    rows = cursor.fetchall() # list of tuples
+    cursor.close()
+
+    result = []
+
+    for row in rows:
+
+        trade = Trade(symbol=row[0],
+                      side=row[1], 
+                      quantity=row[2],
+                      price=row[3],
+                      )
+        # used a class to rep a trade object for extendability instead of raw dict.
+
+        result.append({
+            "symbol" : trade.symbol,
+            "quantity" : trade.quantity,
+            "price" : trade.price,
+            "trade_value": trade.notional_value(),
+            "side": trade.side.value,
+        })
+
+    return result
