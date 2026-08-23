@@ -110,3 +110,4 @@ def get_trades_by_symbol_repo(conn, symbol: str):
         })
 
     return result
+# seperation of concerns for persistnece ...
