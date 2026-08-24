@@ -2,10 +2,11 @@ import time
 import logging
 from fastapi import HTTPException
 
+import repository
 from src.utils import log_execution
 from src.domain import Trade, EquityTrade
 from src.constants import SUPPORTED_SYMBOLS
-from src.repository import insert_trade_repo, get_portfolio_repo, get_trades_by_symbol_repo
+
 
 
 logging.basicConfig(level=logging.INFO)
@@ -28,7 +29,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
     # business validations
     
 
-    persisted_trade = insert_trade_repo(conn, trade)
+    persisted_trade = repository.insert_trade_repo(conn, trade)
     # persistence goes onto the repository layer / abstraction
 
     # add business derived data below
@@ -42,165 +43,34 @@ def create_trade(conn, trade: EquityTrade): # parameters
 
 def get_portfolio(conn): # aggregates the trade data into an overview for the client to get detailed info of their portfolio.
 
-    return get_portfolio_repo(conn) 
+    return repository.get_portfolio_repo(conn) 
 
 # simple one line, as I delegated the persistence in the repository layer.
-
 # doesnt care about SQL, tuples, cursors and fetchall()
-
-
-
-############################################################################################################
-# generator
-
-
-def generate_trade_responses(rows): # helper generator function
-    for row in rows:
-        symbol, side, quantity, price = row
-
-        trade = Trade(symbol=symbol,
-                      quantity=quantity,
-                      price=price,
-                      side=side)
-
-        yield {
-            "symbol": trade.symbol,
-            "quantity": trade.quantity,
-            "price": trade.price,
-            "trade_value": trade.notional_value(),
-            "side": trade.side.value,
-        } 
-
-# pauses every call and resumes where it left off...
-# single source of truth for turning DB rows into API response dictionairies.
-
-
-############################################################################################################
-
 
 def get_trades_by_symbol(conn, symbol: str):
 
-    return get_trades_by_symbol_repo(conn, symbol)
+    return repository.get_trades_by_symbol_repo(conn, symbol)
 
-@log_execution # a decorator is a func that takes another func as an input and returns a new func wrapper that adds extra behaviour
+
+
+@log_execution 
+# a decorator is a func that takes another func as an input and returns a new func wrapper that adds extra behaviour
 def get_trades(conn, limit: int):
+    return repository.get_trades_repo(conn, limit)
 
-    cursor = conn.cursor()
-
-    query_start = time.time() # logging latency
-
-    try:
-        cursor.execute("""
-            SELECT symbol, side, quantity, price
-            FROM trades
-            LIMIT %s
-        """, (limit,)
-        )
-
-        logging.info(f"DB query took {time.time() - query_start:.4f}s")
-
-        rows = cursor.fetchall()
-
-        return list(generate_trade_responses(rows))
-
-    finally:
-        cursor.close()
-
-############################################################################################################
-
-def portfolio_row_to_dict(row): # Helper function
-    return {
-        "symbol": row[0],
-        "total_quantity": row[1],
-        "average_price": row[2],
-        "total_value": row[3],
-        
-    }
-
-############################################################################################################
 
 
 def get_portfolio_by_symbol(conn, symbol: str):
 
-    cursor = conn.cursor() # creates the tool from an already open db conn
+    portfolio = repository.get_portfolio_by_symbol_repo(conn, symbol)
 
-    try:
-        cursor.execute("""
-            SELECT
-                symbol,
-                SUM(quantity) AS total_quantity,
-                SUM(quantity * price) / SUM(quantity) AS average_price,
-                SUM(quantity * price) AS total_value
-            FROM trades
-            WHERE symbol = %s
-            GROUP BY symbol
-        """,
-        (symbol,))
+    if portfolio == None:
+        raise HTTPException(status_code=404, detail="Portfoliio not found")
 
-        row = cursor.fetchone() #fetches what we executed...
-
-        if row is None:
-            return None # edge case...
-
-        return portfolio_row_to_dict(row)
-    
-    except Exception as e:
-        logging.error(f"Database error: {e}")
-        raise # added structured exception logging to improve debugging and observability
-
-    finally:
-        cursor.close() # cursor clean up no matter what...
+    return portfolio
 
 
-###################################################################################################
-
-def position_row_to_dict(row): # cleaner service function ,another helper...
-    symbol, net_quantity, market_price, exposure = row
-
-    return {
-        "symbol": symbol,
-        "net_quantity": net_quantity,
-        "market_price": market_price,
-        "exposure": exposure,
-    }
-##################################################################################################
-
+@log_execution
 def get_positions(conn):
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute("""
-                            SELECT
-                                t.symbol,
-                                SUM(
-                                    CASE
-                                        WHEN t.side = 'BUY' THEN t.quantity
-                                        WHEN t.side = 'SELL' THEN -t.quantity
-                                    END
-                                ) AS net_quantity,
-                                mp.price AS market_price,
-                                SUM(
-                                    CASE
-                                        WHEN t.side = 'BUY' THEN t.quantity
-                                        WHEN t.side = 'SELL' THEN -t.quantity
-                                    END
-                                ) * mp.price AS exposure
-                            FROM trades t
-                            JOIN market_prices mp
-                                ON t.symbol = mp.symbol
-                            GROUP BY t.symbol, mp.price;
-                        """)
-    # Aggregate trade events into current positions.
-    # BUY trades increase net quantity; SELL trades decrease it.
-    # Exposure is calculated from net quantity and market price.
-
-        rows = cursor.fetchall()
-
-        result = []
-
-        
-
-        return [position_row_to_dict(row) for row in rows] # list comprehension ?
-
-    finally:
-        cursor.close()
+    return repository.get_positions_repo(conn)

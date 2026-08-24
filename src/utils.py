@@ -9,7 +9,6 @@ with open("config.yaml", "r") as file:
 print(config)
 
 
-
 def reverse_string(symbol: str) -> str:
     return symbol[::-1] #reversed using a slicing method
 
@@ -29,8 +28,7 @@ def log_execution(func): #decorator
         return result
     
     return wrapper
-## corss-cutting concern as this logic is used across modules...
 
-
+## cross-cutting concern used across the system
 
 logging.basicConfig(level=logging.INFO) 

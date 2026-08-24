@@ -20,7 +20,7 @@ def insert_trade_repo(conn, trade: EquityTrade):
                 """,
                 (trade.symbol, trade.side.value, trade.quantity, trade.price)
             )
-            # db call ?
+            # db transaction ?
 
         row = cursor.fetchone() # returns as a tuple
         
@@ -95,7 +95,7 @@ def get_trades_by_symbol_repo(conn, symbol: str):
     for row in rows:
 
         trade = Trade(symbol=row[0],
-                      side=row[1], 
+                      side=row[1],
                       quantity=row[2],
                       price=row[3],
                       )
@@ -110,4 +110,143 @@ def get_trades_by_symbol_repo(conn, symbol: str):
         })
 
     return result
-# seperation of concerns for persistnece ...
+# seperation of concerns for persistence...
+
+
+############################################################################################################
+# helper generator function
+def generate_trade_responses(rows):
+    for row in rows:
+        symbol, side, quantity, price = row
+        # unpacking the tuple from sql to an application object.
+
+        trade = Trade(symbol=symbol,
+                      quantity=quantity,
+                      price=price,
+                      side=side)
+
+        yield {
+            "symbol": trade.symbol,
+            "quantity": trade.quantity,
+            "price": trade.price,
+            "trade_value": trade.notional_value(),
+            "side": trade.side.value,
+        } 
+        # pauses every call and resumes where it left off... using yield
+        # single source of truth for turning DB rows into API response dictionairies.
+
+
+def portfolio_row_to_dict(row): # Helper function
+    return {
+        "symbol": row[0],
+        "total_quantity": row[1],
+        "average_price": row[2],
+        "total_value": row[3],
+    }
+
+
+def position_row_to_dict(row): # cleaner service function ,another helper...
+    symbol, net_quantity, market_price, exposure = row
+
+    return {
+        "symbol": symbol,
+        "net_quantity": net_quantity,
+        "market_price": market_price,
+        "exposure": exposure,
+    }
+
+############################################################################################################
+
+
+def get_trades_repo(conn, limit: int):
+    cursor = conn.cursor()
+
+    query_start = time.time() # logging latency
+
+    try:
+        cursor.execute("""
+            SELECT symbol, side, quantity, price
+            FROM trades
+            LIMIT %s
+        """, (limit,)
+        )
+     
+        logging.info(f"DB query took {time.time() - query_start:.4f}s")
+     
+        rows = cursor.fetchall()
+     
+        return list(generate_trade_responses(rows))
+     
+    finally:
+            cursor.close()
+
+def get_portfolio_by_symbol_repo(conn, symbol: str):
+    cursor = conn.cursor() # creates the tool from an already open db conn
+
+    try:
+        cursor.execute("""
+            SELECT
+                symbol,
+                SUM(quantity) AS total_quantity,
+                SUM(quantity * price) / SUM(quantity) AS average_price,
+                SUM(quantity * price) AS total_value
+            FROM trades
+            WHERE symbol = %s
+            GROUP BY symbol
+        """,
+        (symbol,))
+
+        row = cursor.fetchone() #fetches what we executed...
+
+        if row is None:
+            return None # edge case...
+
+        return portfolio_row_to_dict(row)
+    
+    except Exception as e:
+        logging.error(f"Database error: {e}")
+        raise # added structured exception logging to improve debugging and observability
+
+    finally:
+        cursor.close() # cursor clean up no matter what...
+
+    
+def get_positions_repo(conn):
+    cursor = conn.cursor()
+    
+    try:
+        cursor.execute("""
+                        SELECT
+                            t.symbol,
+                            SUM(
+                                CASE
+                                    WHEN t.side = 'BUY' THEN t.quantity
+                                    WHEN t.side = 'SELL' THEN -t.quantity
+                                    END
+                                ) AS net_quantity,
+                                mp.price AS market_price,
+                            SUM(
+                                CASE
+                                    WHEN t.side = 'BUY' THEN t.quantity
+                                    WHEN t.side = 'SELL' THEN -t.quantity
+                                    END
+                                ) * mp.price AS exposure
+                        FROM trades t
+                        JOIN market_prices mp
+                        ON t.symbol = mp.symbol
+                        GROUP BY t.symbol, mp.price;
+                        """)
+        # Aggregate trade events into current positions.
+        # BUY trades increase net quantity; SELL trades decrease it.
+        # Exposure is calculated from net quantity and market price.
+    
+        rows = cursor.fetchall()
+    
+        result = []
+    
+            
+    
+        return [position_row_to_dict(row) for row in rows] # list comprehension ?
+    
+    finally:
+        cursor.close()
