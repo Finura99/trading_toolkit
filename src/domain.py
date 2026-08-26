@@ -37,11 +37,11 @@ class Trade:
         return f"{self.symbol}: {self.quantity:g} @ {self.price:g}"
 
 
-    def notional_value(self) -> float: # concrete method
+    def notional_value(self) -> float: # concrete method/ buisness behaviours a trade has
         return self.quantity * self.price
     
     def signed_quantity(self) -> float: # helps calculate the net position from multiple trades from the quantity...
-        if self.side == TradeSide.BUY: # changes
+        if self.side == TradeSide.BUY: 
             return self.quantity
         
         return -self.quantity
@@ -66,11 +66,9 @@ class FeeCalculator(ABC):
     def calculate_fee(self, trade: Trade):
         pass
 
-    # FeeCalculator defines expected behaviour without exposing implementation details
-    # this tells us that any object/class using method calculate fee must adhere to its signature parameters and method name.
-    # abstraction applied here
-    # essentially like an api contract
-    # it defines the contract that every fee calculator implementation must satisfy.
+# FeeCalculator defines expected behaviour without exposing implementation details
+# this tells us that any object/class using method calculate_fee must adhere to its signature parameters and method name.
+# essentially like an api contract, it defines the contract that every fee calculator implementation must satisfy.
 
 
 
@@ -117,19 +115,17 @@ class TradeProcessor:
             "fee": fee,
             "net_value": trade.notional_value() - fee
         }
-# Composition = TradeProcessor uses a fee calculator object/s from another class.
+# Composition = TradeProcessor uses "HAS A" a fee calculator object/s from another class.
 
 
 
 @dataclass
-class EquityTrade(Trade): # Inheritance because equitytrade is a specialised trade of the super class.
+class EquityTrade(Trade): # Inheritance because equitytrade "IS A" specialised trade of the super class.
     exchange: str = "NASDAQ"
 
     def market(self) -> str: # concrete method
         return f"{self.symbol} trades on {self.exchange}" # extended on the inherited attributes
     
-
-
 
 
 

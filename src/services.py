@@ -19,7 +19,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
     
     if trade.quantity <= 0:
         raise HTTPException(status_code=400,
-                            detail="Quantity must be positive") 
+                            detail="Quantity must be positive")
     # extra layer of api validation
         
 
@@ -35,7 +35,7 @@ def create_trade(conn, trade: EquityTrade): # parameters
     # add business derived data below
 
     return {
-        **persisted_trade, # using double asterisks here is dict unpacking
+        **persisted_trade, # using double asterisks here for unpacking the dict.
         "trade_value" : trade.notional_value()
     } 
 
