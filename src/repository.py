@@ -118,7 +118,7 @@ def get_trades_by_symbol_repo(conn, symbol: str):
 def generate_trade_responses(rows):
     for row in rows:
         symbol, side, quantity, price = row
-        # unpacking the tuple from sql to an application object.
+        # unpacking the tuple from sql to an application object shown below.
 
         trade = Trade(symbol=symbol,
                       quantity=quantity,
@@ -196,7 +196,7 @@ def get_portfolio_by_symbol_repo(conn, symbol: str):
         """,
         (symbol,))
 
-        row = cursor.fetchone() #fetches what we executed...
+        row = cursor.fetchone() # fetches what we executed...
 
         if row is None:
             return None # edge case...
