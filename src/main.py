@@ -79,7 +79,7 @@ def create_trade_endpoint(trade: TradeCreate): #api validation to check if the d
     with db_connection() as conn:
         result = create_trade(conn, trade_obj)
 
-        return result #context manager
+        return result # context manager
 
 
 

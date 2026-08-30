@@ -1,5 +1,5 @@
 import logging
-from time import time
+import time
 from src.domain import Trade, EquityTrade
 
 
@@ -20,7 +20,7 @@ def insert_trade_repo(conn, trade: EquityTrade):
                 """,
                 (trade.symbol, trade.side.value, trade.quantity, trade.price)
             )
-            # db transaction ?
+            # db transaction
 
         row = cursor.fetchone() # returns as a tuple
         
@@ -58,6 +58,7 @@ def get_portfolio_repo(conn):
                     FROM trades
                     GROUP BY symbol;
     """)
+    ## aggregated the values using SUM
 
     rows = cursor.fetchall()
     cursor.close()
@@ -136,7 +137,7 @@ def generate_trade_responses(rows):
         # single source of truth for turning DB rows into API response dictionairies.
 
 
-def portfolio_row_to_dict(row): # Helper function
+def portfolio_row_to_dict(row): # helper function for positional unpacking of sql tuples
     return {
         "symbol": row[0],
         "total_quantity": row[1],
@@ -145,7 +146,7 @@ def portfolio_row_to_dict(row): # Helper function
     }
 
 
-def position_row_to_dict(row): # cleaner service function ,another helper...
+def position_row_to_dict(row): # cleaner service function, another helper...
     symbol, net_quantity, market_price, exposure = row
 
     return {

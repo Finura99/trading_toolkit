@@ -2,7 +2,7 @@ import time
 import logging
 from fastapi import HTTPException
 
-import repository
+from src import repository
 from src.utils import log_execution
 from src.domain import Trade, EquityTrade
 from src.constants import SUPPORTED_SYMBOLS
@@ -37,13 +37,13 @@ def create_trade(conn, trade: EquityTrade): # parameters
     return {
         **persisted_trade, # using double asterisks here for unpacking the dict.
         "trade_value" : trade.notional_value()
-    } 
+    }
 
 
 
 def get_portfolio(conn): # aggregates the trade data into an overview for the client to get detailed info of their portfolio.
 
-    return repository.get_portfolio_repo(conn) 
+    return repository.get_portfolio_repo(conn)
 
 # simple one line, as I delegated the persistence in the repository layer.
 # doesnt care about SQL, tuples, cursors and fetchall()
@@ -54,7 +54,7 @@ def get_trades_by_symbol(conn, symbol: str):
 
 
 
-@log_execution 
+@log_execution
 # a decorator is a func that takes another func as an input and returns a new func wrapper that adds extra behaviour
 def get_trades(conn, limit: int):
     return repository.get_trades_repo(conn, limit)
