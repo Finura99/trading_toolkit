@@ -28,7 +28,7 @@ def insert_trade_repo(conn, trade: EquityTrade):
         conn.commit() # save changes - DB transaction handling - only used when writing/updating data 
         logging.info("After Commit")
 
-        symbol, side, quantity, price = row # mapping the rows 
+        symbol, side, quantity, price = row # mapping the rows
 
         return {
             "symbol" : symbol,
@@ -38,12 +38,18 @@ def insert_trade_repo(conn, trade: EquityTrade):
         }
 
     except Exception as e:
+        # log the error messege
         logging.error(f"Database transaction failed: {e}")
+
+        # undo any half finished db changes
         conn.rollback()
+
+        # re-raise the original exception
         raise
         
     finally:
         cursor.close()
+        # always runs even after the raise above triggers.
 
 
 def get_portfolio_repo(conn):
