@@ -25,7 +25,7 @@ def insert_trade_repo(conn, trade: EquityTrade):
         row = cursor.fetchone() # returns as a tuple
         
         logging.info("Before Commit")
-        conn.commit() # save changes - DB transaction han dling - only used when writing/updating data 
+        conn.commit() # save changes - DB transaction handling - only used when writing/updating data 
         logging.info("After Commit")
 
         symbol, side, quantity, price = row # mapping the rows
